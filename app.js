@@ -2,7 +2,7 @@
    Без сборки: обычный скрипт. Данные — window.KAB_DATA (data.js), настройки — window.KABINETAS (config.js).
    Адреса (на нашем хостинге): #k=<токен клиента> — клиент; #a=<токен команды> — мы. Без токена в демо — переключатель «Klientas / Komanda».
    В артефакте claude.ai (window.KAB_EMBED) — только демо в этом браузере, без адресов.
-   Вход: число «laukia», план «Kas toliau» (projects[].plan), карточки. Пояснения — за «?» в шапке.
+   Вход: линия этапов «Kas toliau» на всю ширину под шапкой (projects[].plan, без текста «Dabar / Toliau»), число «laukia», карточки. Пояснения — за «?» в шапке.
    Плеер: варианты v1/v2 (обычно — с начала), режим «Palyginti» (та же секунда), «Kas pakeista» свёрнуто,
    в конце ролика — «Toliau» и через 5 с следующий ролик. */
 (function () {
@@ -50,16 +50,16 @@
       planTitle: 'Kas toliau',
       planNow: 'Dabar', planNext: 'Toliau', planAllDone: 'Viskas atlikta',
       variants: 'Variantai',
-      compareMode: '⇄ Palyginti',
+      compareMode: 'Palyginti',
       compareHint: 'Perjungiama toje pačioje vietoje',
       compareOff: 'Baigti palyginimą',
       sameMoment: function (tc) { return 'ta pati vieta ' + tc; },
       aboutFirst: 'Apie šį variantą',
       whatChanged: function (l) { return 'Kas pakeista (' + l + ')'; },
       noteBtn: 'Pastaba šioje vietoje',
-      approve: '✅ Tvirtinu',
+      approve: 'Tvirtinu',
       needChanges: 'Reikia pataisymų',
-      approvedT: '✅ Patvirtinta',
+      approvedT: 'Patvirtinta',
       changesT: 'Reikia pataisymų',
       changesSub: 'Pataisysime pagal jūsų pastabas ir naują variantą įkelsime čia.',
       byWhen: function (who, when) { return (who ? who + ', ' : '') + when; },
@@ -150,16 +150,16 @@
       planTitle: 'What’s next',
       planNow: 'Now', planNext: 'Next', planAllDone: 'All done',
       variants: 'Versions',
-      compareMode: '⇄ Compare',
+      compareMode: 'Compare',
       compareHint: 'Switches at the same moment',
       compareOff: 'Exit compare',
       sameMoment: function (tc) { return 'same moment ' + tc; },
       aboutFirst: 'About this version',
       whatChanged: function (l) { return 'What changed (' + l + ')'; },
       noteBtn: 'Note at this moment',
-      approve: '✅ I approve',
+      approve: 'I approve',
       needChanges: 'Needs changes',
-      approvedT: '✅ Approved',
+      approvedT: 'Approved',
       changesT: 'Needs changes',
       changesSub: 'We will make the changes from your notes and upload a new version right here.',
       byWhen: function (who, when) { return (who ? who + ', ' : '') + when; },
@@ -469,7 +469,7 @@
     document.documentElement.lang = L;
     renderTop();
     if (S.view === 'list') renderList();
-    else if (S.view === 'player') { E.noteLabel.textContent = '📝 ' + t('noteBtn'); hideUpnext(); renderSide(); renderTrack(); }
+    else if (S.view === 'player') { E.noteLabel.textContent = t('noteBtn'); hideUpnext(); renderSide(); renderTrack(); }
     else if (S.view === 'state') renderState(S.stateKind);
   }
   function setRole(r) {
@@ -523,33 +523,24 @@
     return { steps: steps, cur: cur };
   }
   function stepText(s) { return loc(s.text) || loc(s.title); }
-  function planLines(pi) {
-    var now = pi.steps[pi.cur], next = pi.steps[pi.cur + 1];
-    if (!now) return [h('p', { class: 'pl-line now' }, h('b', { text: '✓ ' + t('planAllDone') }))];
-    return [
-      h('p', { class: 'pl-line now' }, h('b', { text: t('planNow') + ':' }), ' ', stepText(now)),
-      next ? h('p', { class: 'pl-line' }, h('b', { text: t('planNext') + ':' }), ' ', stepText(next)) : null
-    ];
-  }
-  function planBlock(plan, id) {
+  // только линия этапов: без «Dabar: … / Toliau: …» (решение Павла 17.11); заголовок — для экранных читалок
+  // kind: 'band' — на всю ширину под шапкой (клиент, общий план); 'inline' — у проекта; 'compact' — в плеере
+  function planBlock(plan, id, kind) {
     var pi = planInfo(plan);
     if (!pi) return null;
-    return h('section', { class: 'plan', id: id, 'aria-label': t('planTitle') },
-      h('h2', { text: t('planTitle') }),
-      h('ol', { class: 'pl-steps', style: '--n:' + pi.steps.length }, pi.steps.map(function (s, i) {
-        var st = i < pi.cur ? 'done' : i === pi.cur ? 'now' : 'next';
-        return h('li', { class: st, 'aria-current': st === 'now' ? 'step' : null },
-          h('i', { 'aria-hidden': 'true', text: st === 'done' ? '✓' : String(i + 1) }), h('span', { text: loc(s.title) || stepText(s) }));
-      })),
-      h('div', { class: 'pl-lines' }, planLines(pi)));
+    var steps = h('ol', { class: 'pl-steps', style: '--n:' + pi.steps.length }, pi.steps.map(function (s, i) {
+      var st = i < pi.cur ? 'done' : i === pi.cur ? 'now' : 'next';
+      return h('li', { class: st, 'aria-current': st === 'now' ? 'step' : null, title: stepText(s) },
+        h('i', { 'aria-hidden': 'true', text: st === 'done' ? '✓' : String(i + 1) }), h('span', { text: loc(s.title) || stepText(s) }));
+    }));
+    var head = h('h2', { class: 'sr', text: t('planTitle') + (pi.steps[pi.cur] ? ' · ' + t('planNow') + ': ' + stepText(pi.steps[pi.cur]) : ' · ' + t('planAllDone')) });
+    var cls = 'plan plan-' + (kind || 'inline') + (pi.cur >= pi.steps.length ? ' all-done' : '');
+    if (kind === 'band') return h('section', { class: cls, id: id, 'aria-label': t('planTitle') }, h('div', { class: 'wrap' }, head, steps));
+    return h('section', { class: cls, id: id, 'aria-label': t('planTitle') }, head, steps);
   }
-  function planMini(plan) {
-    var pi = planInfo(plan);
-    if (!pi) return null;
-    return h('section', { class: 'planmini', id: 'plan-mini', 'aria-label': t('planTitle') },
-      h('span', { class: 'pm-bar', 'aria-hidden': 'true' }, pi.steps.map(function (s, i) { return h('i', { class: i < pi.cur ? 'done' : i === pi.cur ? 'now' : null }); })),
-      h('div', { class: 'pm-t' }, planLines(pi)));
-  }
+  function planMini(plan) { return planBlock(plan, 'plan-mini', 'compact'); }
+  // колонки сетки: ряды заполнены целиком, без пустого места справа (оно и давало «сдвиг влево»)
+  function cols(n, max, min) { return n <= max ? Math.max(n, min) : Math.ceil(n / Math.ceil(n / max)); }
   // один план на все проекты клиента — показываем один раз, рядом с заголовком
   function sharedPlan(c) {
     var ps = (c.projects || []).filter(function (p) { return projReels(p).length; });
@@ -564,6 +555,10 @@
     var key = st === 'new' && !isClient() ? 'chip_new_team' : 'chip_' + st;
     return h('span', { class: 'chip ' + st, text: t(key) });
   }
+  // клиенту на обложке — только значок «просмотрено / не просмотрено» (точка или галочка), без слов; слово — для читалок и в подсказке
+  function mark(st) {
+    return h('span', { class: 'mk ' + st, role: 'img', 'aria-label': t('chip_' + st), title: t('chip_' + st) });
+  }
   function showList() {
     S.view = 'list'; S.rid = null; S.vid = null; S.editing = null;
     pauseVideo(); stopRaf(); hideUpnext();
@@ -575,28 +570,30 @@
     E.main.textContent = '';
     var box = h('div', { class: 'wrap', id: 'list' });
     var shared = isClient() && S.clients[0] ? sharedPlan(S.clients[0]) : null;
-    box.appendChild(isClient() ? heroClient(shared) : heroTeam());
+    // общий план клиента — линия этапов на всю ширину сразу под шапкой
+    if (shared) E.main.appendChild(planBlock(shared, 'plan', 'band'));
+    box.appendChild(isClient() ? heroClient() : heroTeam());
     S.clients.forEach(function (c) {
       if (!isClient() && S.clients.length > 1) box.appendChild(h('h2', { class: 'client-h', text: c.name }));
       (c.projects || []).forEach(function (p) {
         var reels = projReels(p);
         if (!reels.length) return;
+        // подзаголовок проекта (p.subtitle) не показываем — только короткое название группы
         box.appendChild(h('section', { class: 'proj' },
-          h('div', { class: 'proj-h' }, h('h2', { text: p.title }), p.subtitle ? h('span', { text: p.subtitle }) : null),
-          shared ? null : planBlock(p.plan, 'plan-' + c.id + '-' + p.id),
-          h('div', { class: 'grid' }, reels.map(function (r) { return card(c, r); }))));
+          h('div', { class: 'proj-h' }, h('h2', { text: p.title })),
+          shared ? null : planBlock(p.plan, 'plan-' + c.id + '-' + p.id, 'inline'),
+          h('div', { class: 'grid', style: '--dc:' + cols(reels.length, 6, 4) + ';--tc:' + cols(reels.length, 4, 3) }, reels.map(function (r) { return card(c, r); }))));
       });
     });
     box.appendChild(footer());
     E.main.appendChild(box);
   }
-  function heroClient(plan) {
+  function heroClient() {
     var w = waitingReels();
     var head = w.length
       ? h('h1', null, h('span', { class: 'n', text: String(w.length) }), ' ', t('waitingTail', w.length))
       : [h('h1', { text: t('allDone') }), h('p', { text: t('allDoneSub') })];
-    var pb = plan ? planBlock(plan, 'plan') : null;
-    return h('section', { class: 'hero' + (pb ? ' has-plan' : '') }, h('div', { class: 'hero-t' }, head), pb);
+    return h('section', { class: 'hero' }, h('div', { class: 'hero-t' }, head));
   }
   function heroTeam() {
     var rs = allReels(), un = S.notes.filter(unanswered);
@@ -619,9 +616,8 @@
     var nv = rn.filter(function (n) { return n.version_id === v.id; }).length;
     var meta = null;
     if (isClient()) {
-      // карточка сама говорит, что её можно открыть и прокомментировать
+      // под карточкой — только число заметок; «Žiūrėti ir komentuoti» не пишем: кнопка ▶ говорит то же
       if (nv) meta = h('span', { class: 'cm cta', text: t('nNotes', nv) });
-      else if (st === 'new' || st === 'seen') meta = h('span', { class: 'cm cta', text: t('cardCta') });
     } else {
       var parts = [], un = rn.filter(unanswered).length;
       if (nv) parts.push(t('nNotes', nv));
@@ -633,7 +629,7 @@
     var cover = v.poster ? h('img', { src: v.poster, alt: '', loading: 'lazy', decoding: 'async' }) : [h('span', { class: 'tile', text: v.label || '9×16' }), frameThumb(v.src)];
     var thumb = h('span', { class: 'thumb' }, cover,
       h('span', { class: 'play', 'aria-hidden': 'true' }),
-      chip(st),
+      isClient() ? mark(st) : chip(st),
       h('span', { class: 'vtag', text: v.label }),
       v.duration ? h('span', { class: 'dur', text: fmtT(v.duration) }) : null);
     return h('button', { type: 'button', class: 'card', id: 'card-' + r.id, 'data-state': st, onclick: function () { openReel(c.id, r.id); } },
@@ -689,7 +685,7 @@
     E.tl0 = h('span', { text: '0:00' });
     E.tl1 = h('span', { text: '' });
     E.nowt = h('span', { class: 'nowt', id: 'nowt', text: '0:00' });
-    E.noteLabel = h('span', { text: '📝 ' + t('noteBtn') });
+    E.noteLabel = h('span', { class: 'nl', text: t('noteBtn') });
     E.noteBtn = h('button', { type: 'button', class: 'notebtn', id: 'note-btn', onclick: onNoteBtn }, E.noteLabel, E.nowt);
     E.cmpbar = h('div', { class: 'cmpbar', id: 'cmpbar', hidden: true });
     var stagecol = h('div', { class: 'stagecol' }, E.stage, E.track, h('div', { class: 'tlabels' }, E.tl0, E.tl1), E.cmpbar, h('div', { class: 'notebar' }, E.noteBtn));
@@ -897,7 +893,6 @@
     var vs = vr.rr.vs;
     if (vs.length < 2) return null;
     return h('div', { class: 'variants' },
-      h('span', { class: 'vl', text: t('variants') }),
       h('div', { class: 'vseg', role: 'group', 'aria-label': t('variants') }, vs.map(function (v) {
         var st = vState(vr.c.id, v.id);
         return h('button', { type: 'button', 'data-v': v.id, id: 'ver-' + v.label, 'aria-pressed': String(v.id === vr.v.id), onclick: function () { pickVersion(v); } },
@@ -917,7 +912,7 @@
       h('div', { class: 'cseg', role: 'group', 'aria-label': t('variants') }, vr.rr.vs.map(function (v) {
         return h('button', { type: 'button', id: 'cmp-' + v.label, 'aria-pressed': String(v.id === vr.v.id), onclick: function () { switchVersion(v, { same: true }); } }, v.label);
       })),
-      h('span', { class: 'chint', text: t('compareHint') }),
+      h('span', { class: 'chint', 'aria-hidden': 'true' }),
       h('button', { type: 'button', class: 'cx', id: 'cmp-off', 'aria-label': t('compareOff'), title: t('compareOff'), onclick: toggleCompare }, '×'));
   }
   function changesBox(vr) {
@@ -959,10 +954,11 @@
   }
   function teamStatusPanel(vr) {
     var s = stOf(vr.c.id, vr.v.id) || {};
+    // коротко: метка статуса (+ кто и когда решил) и строка «кто смотрел, сколько %» — только если есть что сказать;
+    // «ещё не смотрел» / «решения нет» словами не пишем — это уже говорит метка
     var lines = [
-      h('li', null, chip(vState(vr.c.id, vr.v.id))),
-      h('li', { text: s.seen_at ? t('seenLine', s.seen_by, fmtD(s.seen_at), s.seen_pct) : t('notSeenLine') }),
-      h('li', { text: s.decision === 'approved' ? t('approvedLine', s.decided_by, fmtD(s.decided_at)) : s.decision === 'changes' ? t('changesLine', s.decided_by, fmtD(s.decided_at)) : t('noDecisionLine') })
+      h('li', null, chip(vState(vr.c.id, vr.v.id)), s.decision ? h('span', { class: 'sl-by', text: t('byWhen', s.decided_by, fmtD(s.decided_at)) }) : null),
+      s.seen_at ? h('li', { text: t('seenLine', s.seen_by, fmtD(s.seen_at), s.seen_pct) }) : null
     ];
     return h('section', { class: 'panel', id: 'decision' }, h('h3', { text: t('clientDecision') + ' · ' + vr.v.label }), h('ul', { class: 'st-lines' }, lines));
   }
@@ -971,7 +967,7 @@
     var box = h('section', { class: 'panel', id: 'notes-panel' },
       h('h3', null, t('notes'), mine.length ? h('span', { class: 'chip seen count', text: String(mine.length) }) : null));
     if (mine.length) box.append(h('ul', { class: 'notes', id: 'notes' }, mine.map(function (n) { return noteItem(n, false); })));
-    else box.append(h('p', { class: 'empty', id: 'notes-empty', text: isClient() ? t('notesEmpty') : t('notesEmptyTeam') }));
+    // пусто — ничего не пишем: под заголовком сразу «+ Bendra pastaba»
     box.append(h('div', null, h('button', { type: 'button', class: 'linkbtn', id: 'add-general', onclick: function () { noteSheet(null, {}); } }, t('addGeneral'))));
     var older = [];
     vr.rr.vs.forEach(function (v) { if (v.id !== vr.v.id) older = older.concat(notesOf(vr.c.id, v.id)); });
@@ -1242,6 +1238,6 @@
     });
   }
 
-  window.KAB_APP = { state: S, version: '2026-11-17b' };
+  window.KAB_APP = { state: S, version: '2026-11-17c' };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();
