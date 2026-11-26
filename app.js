@@ -480,9 +480,12 @@
   }
   function isIOS() { return /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
   // ссылка «Atsisiųsti»: обычный <a> (без iframe и fetch — их режет политика страницы и память телефона); отметка — только у клиента
+  // 26.11: финал Full HD на Google Диске (поле dl у версии) — только адреса Диска; нет dl — копия просмотра (720p) из бакета
+  function driveDl(u) { return /^https:\/\/(drive\.google\.com|drive\.usercontent\.google\.com)\//.test(String(u || '')) ? String(u) : ''; }
   function dlLink(c, r, v, attrs, label) {
-    var name = dlName(c, r, v);
-    var a = h('a', Object.assign({ href: dlHref(v.src, name), download: name, rel: 'noopener', 'data-v': v.id }, attrs || {}), label);
+    var name = dlName(c, r, v), drv = driveDl(v.dl);
+    var a = h('a', Object.assign(drv ? { href: drv, target: '_blank', rel: 'noopener', 'data-v': v.id }
+      : { href: dlHref(v.src, name), download: name, rel: 'noopener', 'data-v': v.id }, attrs || {}), label);
     a.addEventListener('click', function () { markDl(c.id, v.id); });
     return a;
   }
