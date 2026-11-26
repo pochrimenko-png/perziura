@@ -121,7 +121,26 @@
       cfgText: 'Trūksta duomenų bazės nustatymų (config.js).',
       retry: 'Bandyti dar kartą',
       upNext: 'Toliau', upPlay: 'Žiūrėti', upCancel: 'Atšaukti',
-      langLabel: 'Kalba'
+      langLabel: 'Kalba',
+      // 26.11: atsisiuntimas, juodraščiai, taisyklės, nauja versija
+      download: function (l) { return 'Atsisiųsti' + (l ? ' ' + l : ''); },
+      downloadAll: 'Atsisiųsti viską',
+      downloadAllSub: 'Naujausi variantai. Telefone failai atsisiunčiami po vieną – spauskite kiekvieną.',
+      downloadSeq: 'Visus iš eilės',
+      downloadedMark: 'Atsisiųsta ✓',
+      downloadedLine: function (who, when) { return 'Atsisiųsta ✓ ' + (who ? who + ', ' : '') + when; },
+      notDownloadedLine: 'Dar neatsisiųsta',
+      dlShort: 'atsisiųsta ✓',
+      sDownloaded: function (x, y) { return 'iš ' + y + ' atsisiųsta'; },
+      dlStarted: 'Atsisiunčiama…',
+      drafts: function (n) { return 'Juodraščiai (' + n + ')'; },
+      draftsSub: 'Peržiūrėti, bet dar be sprendimo ir be pastabų.',
+      rules: 'Taisyklės',
+      rulesOf: function (n) { return 'Taisyklės · ' + n; },
+      toReview: function (n) { return 'Peržiūrėti: ' + n; },
+      newVersionCard: 'Nauja versija – peržiūrėkite',
+      newVersionLine: function (l) { return 'Nauja versija (' + l + ') – peržiūrėkite.'; },
+      oldDecisionLine: function (l) { return 'Sprendimas dėl ' + l + ' šiai versijai negalioja.'; }
     },
     en: {
       review: 'review',
@@ -221,7 +240,25 @@
       cfgText: 'The database settings are missing (config.js).',
       retry: 'Try again',
       upNext: 'Up next', upPlay: 'Watch', upCancel: 'Cancel',
-      langLabel: 'Language'
+      langLabel: 'Language',
+      download: function (l) { return 'Download' + (l ? ' ' + l : ''); },
+      downloadAll: 'Download all',
+      downloadAllSub: 'Latest versions. On a phone files download one by one – tap each.',
+      downloadSeq: 'All in a row',
+      downloadedMark: 'Downloaded ✓',
+      downloadedLine: function (who, when) { return 'Downloaded ✓ ' + (who ? who + ', ' : '') + when; },
+      notDownloadedLine: 'Not downloaded yet',
+      dlShort: 'downloaded ✓',
+      sDownloaded: function (x, y) { return 'of ' + y + ' downloaded'; },
+      dlStarted: 'Downloading…',
+      drafts: function (n) { return 'Drafts (' + n + ')'; },
+      draftsSub: 'Viewed, but no decision and no notes yet.',
+      rules: 'Guidelines',
+      rulesOf: function (n) { return 'Guidelines · ' + n; },
+      toReview: function (n) { return 'To review: ' + n; },
+      newVersionCard: 'New version – please review',
+      newVersionLine: function (l) { return 'New version (' + l + ') – please review.'; },
+      oldDecisionLine: function (l) { return 'The decision on ' + l + ' does not apply to this version.'; }
     }
   };
   function t(k) {
@@ -271,6 +308,76 @@
   function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
   function reducedMotion() { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }
 
+  // ---------------- бренд клиента: логотип, цвет, обложка, шрифт (каталог: brand) ----------------
+  // Нет brand — нейтральный вид 9×16. Плашка «9×16» в шапке всегда наша (жёлтая), цвет клиента заменяет жёлтый в остальном.
+  function hexRgb(x) {
+    var m = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(x || '').trim());
+    if (!m) return null;
+    var hx = m[1].length === 3 ? m[1].replace(/./g, '$&$&') : m[1];
+    return [0, 2, 4].map(function (i) { return parseInt(hx.substr(i, 2), 16); });
+  }
+  function rgbHex(c) { return '#' + c.map(function (v) { v = Math.round(clamp(v, 0, 255)); return (v < 16 ? '0' : '') + v.toString(16); }).join(''); }
+  function lum(c) { var a = c.map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2]; }
+  function contrast(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  function mixRgb(a, b, k) { return a.map(function (v, i) { return v + (b[i] - v) * k; }); }
+  function inkOn(c) { return contrast(c, [255, 255, 255]) >= contrast(c, [26, 26, 26]) ? '#ffffff' : '#1a1a1a'; }
+  // адрес картинки: https:// или относительный путь; без кавычек, скобок и пробелов (идёт в CSS url())
+  function safeUrl(u) {
+    u = String(u || '').trim();
+    if (!u || /["'\\\s()<>]/.test(u)) return '';
+    if (/^https:\/\//i.test(u)) return u;
+    return /^[a-z][a-z0-9+.-]*:/i.test(u) ? '' : u;
+  }
+  function brandOf(c) {
+    var b = c && c.brand;
+    if (!b || typeof b !== 'object' || !Object.keys(b).length) b = c && c.projects && c.projects[0] && c.projects[0].brand; // пока функция базы не отдаёт brand
+    if (!b || typeof b !== 'object') return null;
+    var o = { logo: safeUrl(b.logo), logoLight: safeUrl(b.logoLight), cover: safeUrl(b.cover), color: hexRgb(b.color), font: '', fontWeight: 0 };
+    if (/^[A-Za-z0-9 ]{2,60}$/.test(String(b.font || ''))) { o.font = String(b.font).trim(); o.fontWeight = /^[1-9]00$/.test(String(b.fontWeight || '')) ? +b.fontWeight : 0; }
+    // демо на этом ПК: ?brand=none — без бренда, ?brand=light — только логотип и цвет
+    if (isLocal() && !EMBED) {
+      var q = (location.search.match(/[?&]brand=(none|light)\b/) || [])[1];
+      if (q === 'none') return null;
+      if (q === 'light') { o.cover = ''; o.font = ''; }
+    }
+    return o.logo || o.color || o.cover || o.font ? o : null;
+  }
+  function applyBrand() {
+    var root = document.documentElement, st = root.style;
+    var b = S.brand = S.clients.length === 1 ? brandOf(S.clients[0]) : null;
+    root.classList.toggle('has-brand', !!(b && b.color));
+    root.classList.toggle('has-brand-font', !!(b && b.font));
+    ['--b-accent', '--b-accent-ink', '--b-accent-d', '--b-accent-ink-d', '--b-font', '--b-font-w'].forEach(function (k) { st.removeProperty(k); });
+    if (!b) return;
+    if (b.color) {
+      // тёмная тема и тёмная обложка: тот же цвет, осветлённый до читаемого на тёмном
+      var c = b.color, dk = c;
+      for (var i = 0; i < 12 && contrast(dk, [14, 14, 16]) < 4; i++) dk = mixRgb(dk, [255, 255, 255], 0.12);
+      st.setProperty('--b-accent', rgbHex(c)); st.setProperty('--b-accent-ink', inkOn(c));
+      st.setProperty('--b-accent-d', rgbHex(dk)); st.setProperty('--b-accent-ink-d', inkOn(dk));
+    }
+    if (b.font) {
+      st.setProperty('--b-font', '"' + b.font + '", var(--display)');
+      st.setProperty('--b-font-w', String(b.fontWeight || 400));
+      var href = 'https://fonts.googleapis.com/css2?family=' + b.font.replace(/ /g, '+') + (b.fontWeight ? ':wght@' + b.fontWeight : '') + '&display=swap';
+      var l = document.getElementById('brand-font');
+      if (!l) { l = document.createElement('link'); l.id = 'brand-font'; l.rel = 'stylesheet'; document.head.appendChild(l); }
+      if (l.getAttribute('href') !== href) l.setAttribute('href', href);
+    }
+  }
+  // логотип клиента; light — для тёмного фона (обложка): светлый файл, а если его нет — тот же, перекрашенный в белый
+  function logoEl(where, light) {
+    var b = S.brand, c = S.clients[0];
+    if (!b || !b.logo) return null;
+    var box = h('span', { class: 'c-logo ' + where + (b.logoLight ? ' two' : ' one'), role: 'img', 'aria-label': c ? c.name : '' });
+    if (light) box.append(h('img', { src: b.logoLight || b.logo, alt: '', class: b.logoLight ? 'ld-on' : 'inv', decoding: 'async' }));
+    else {
+      box.append(h('img', { src: b.logo, alt: '', class: 'lo', decoding: 'async' }));
+      if (b.logoLight) box.append(h('img', { src: b.logoLight, alt: '', class: 'ld', decoding: 'async' }));
+    }
+    return box;
+  }
+
   // ---------------- состояние ----------------
   var S = {
     lang: 'lt', auth: null, mode: 'client', backend: null,
@@ -306,7 +413,27 @@
     var s = stOf(cid, vid) || {};
     return s.decision === 'approved' ? 'approved' : s.decision === 'changes' ? 'changes' : s.seen_at ? 'seen' : 'new';
   }
-  function isWaiting(rr) { var s = vState(rr.c.id, rr.latest.id); return s === 'new' || s === 'seen'; }
+  // ждёт клиента: последняя версия без решения и не в «Juodraščiai»
+  function isWaiting(rr) { var s = vState(rr.c.id, rr.latest.id); return (s === 'new' || s === 'seen') && !reelInfo(rr).draft; }
+  function clientNoteOn(cid, rid, vid) {
+    return S.notes.some(function (n) { return n.client_id === cid && n.side !== 'team' && (rid == null || n.reel_id === rid) && (vid == null || n.version_id === vid); });
+  }
+  // одна классификация ролика по последней версии (решения и просмотры — по версии: «Tvirtinu» на v1 к v2 не относится)
+  //   review — клиенту нужно посмотреть: последняя версия не досмотрена (нет seen_at) и без решения;
+  //   newVer — то же, но это новая версия: у прежних уже были просмотр, решение или заметки клиента;
+  //   draft  — «Juodraščiai»: досмотрел, но без решения и без единой своей заметки к ролику; ручной флаг draft у ролика
+  //            в каталоге перекрывает правило в обе стороны. Досмотренное в этом открытии страницы (S.seenSent)
+  //            до перезагрузки остаётся в основном списке — человек ещё решает.
+  function reelInfo(rr) {
+    var cid = rr.c.id, v = rr.latest, s = stOf(cid, v.id) || {};
+    var review = !s.seen_at && !s.decision;
+    var earlier = rr.vs.slice(0, -1).some(function (x) { var o = stOf(cid, x.id); return !!(o && (o.seen_at || o.decision)) || clientNoteOn(cid, null, x.id); });
+    var auto = !!s.seen_at && !s.decision && !clientNoteOn(cid, rr.r.id, null) && !S.seenSent[v.id];
+    var flag = rr.r.draft;
+    var prevDec = null;
+    for (var i = rr.vs.length - 2; i >= 0 && !prevDec; i--) { var o = stOf(cid, rr.vs[i].id); if (o && o.decision) prevDec = rr.vs[i]; }
+    return { review: review, newVer: review && earlier, draft: flag === true ? true : flag === false ? false : auto, prevDecided: prevDec, dl: s.downloaded_at ? s : null };
+  }
   function byT(a, b) {
     var at = a.t == null ? -1 : +a.t, bt = b.t == null ? -1 : +b.t;
     return at - bt || String(a.created_at).localeCompare(String(b.created_at));
@@ -331,6 +458,104 @@
     if (S.open[key]) d.open = true;
     d.addEventListener('toggle', function () { S.open[key] = d.open; });
     return d;
+  }
+
+  // ---------------- «Atsisiųsti» ----------------
+  // имя файла: латиница без знаков (Content-Disposition от Supabase и старые телефоны), например SHIZURI-1600-zmoniu-v2.mp4
+  function dlName(c, r, v) {
+    var ext = (/\.(mp4|mov|m4v|webm)(?:[?#]|$)/i.exec(String(v.src || '')) || [0, 'mp4'])[1].toLowerCase();
+    var base = [c.name, r.title, v.label].join(' ');
+    try { base = base.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) { /* old browser */ }
+    base = base.replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 90) || 'video';
+    return base + '.' + ext;
+  }
+  // публичный файл Supabase Storage: ?download=<имя> → Content-Disposition: attachment (у ссылки на другой домен атрибут download не действует)
+  function dlHref(src, name) {
+    src = String(src || '');
+    if (!/\/storage\/v1\/object\/public\//.test(src)) return src;
+    var i = src.indexOf('#'), hash = i < 0 ? '' : src.slice(i);
+    if (i >= 0) src = src.slice(0, i);
+    src = src.replace(/([?&])download=[^&]*&?/, '$1').replace(/[?&]$/, '');
+    return src + (src.indexOf('?') < 0 ? '?' : '&') + 'download=' + encodeURIComponent(name) + hash;
+  }
+  function isIOS() { return /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
+  // ссылка «Atsisiųsti»: обычный <a> (без iframe и fetch — их режет политика страницы и память телефона); отметка — только у клиента
+  function dlLink(c, r, v, attrs, label) {
+    var name = dlName(c, r, v);
+    var a = h('a', Object.assign({ href: dlHref(v.src, name), download: name, rel: 'noopener', 'data-v': v.id }, attrs || {}), label);
+    a.addEventListener('click', function () { markDl(c.id, v.id); });
+    return a;
+  }
+  function markDl(cid, vid) {
+    toast(t('dlStarted'));
+    if (!isClient()) return Promise.resolve(null);
+    var s = stOf(cid, vid);
+    if (s && s.downloaded_at) return Promise.resolve(s);
+    return S.backend.markDownloaded(S.auth, cid, vid, S.name).then(function (st) {
+      if (st && st.version_id) S.st[cid + '|' + vid] = st;
+      setTimeout(function () { if (S.view === 'player' && !S.editing) renderSide(); markDlRows(); }, 0);
+      return st;
+    }).catch(function () { return null; });
+  }
+  function markDlRows() {
+    if (!S.sheet) return;
+    Array.prototype.forEach.call(S.sheet.querySelectorAll('[data-dl-row]'), function (li) {
+      var s = stOf(li.getAttribute('data-c'), li.getAttribute('data-dl-row'));
+      li.classList.toggle('done', !!(s && s.downloaded_at));
+    });
+  }
+  // «Atsisiųsti viską»: лист со всеми текущими версиями, у каждой своя кнопка (iPhone пускает одно скачивание на одно касание);
+  // на компьютере ещё «Visus iš eilės» — те же ссылки по очереди
+  function dlAllSheet() {
+    var list = [];
+    S.clients.forEach(function (c) { clientReels(c).forEach(function (rr) { list.push(rr); }); });
+    openSheet(function (pan) {
+      var links = [];
+      var ul = h('ul', { class: 'dl-list', id: 'dl-list' }, list.map(function (rr) {
+        var a = dlLink(rr.c, rr.r, rr.latest, { class: 'btn ghost sm' }, t('download'));
+        links.push(a);
+        var s = stOf(rr.c.id, rr.latest.id);
+        return h('li', { 'data-dl-row': rr.latest.id, 'data-c': rr.c.id, class: s && s.downloaded_at ? 'done' : null },
+          h('span', { class: 'dl-t' }, h('b', { text: rr.r.title }), ' ', h('span', { class: 'chip seen count', text: rr.latest.label })),
+          h('span', { class: 'dl-ok', 'aria-label': t('downloadedMark'), title: t('downloadedMark'), text: '✓' }), a);
+      }));
+      var seq = null;
+      if (!isIOS() && list.length > 1) {
+        seq = h('button', { type: 'button', class: 'btn primary', id: 'dl-seq' }, t('downloadSeq'));
+        seq.addEventListener('click', function () {
+          seq.disabled = true;
+          links.forEach(function (a, i) { setTimeout(function () { a.click(); if (i === links.length - 1) seq.disabled = false; }, i * 1500); });
+        });
+      }
+      pan.append(h('div', { class: 'grip' }), h('h2', { text: t('downloadAll') }), h('p', { class: 'sub', text: t('downloadAllSub') }), ul,
+        h('div', { class: 'row' }, seq, h('button', { type: 'button', class: 'btn ghost', id: 'dl-close', onclick: closeSheet }, t('gotIt'))));
+    }, 'dl-sheet');
+  }
+
+  // ---------------- правила клиента (каталог: rules) ----------------
+  // rules: [{title: строка или {lt,en}, items: [строка или {lt,en}]}] — только текст (рисуется textContent, HTML не выполняется)
+  function rulesOf(c) {
+    var rs = c && Array.isArray(c.rules) ? c.rules : [];
+    var out = [];
+    rs.slice(0, 20).forEach(function (g) {
+      if (!g || typeof g !== 'object') return;
+      var items = (Array.isArray(g.items) ? g.items : []).map(function (x) { return loc(x).trim().slice(0, 600); }).filter(Boolean).slice(0, 60);
+      var title = loc(g.title).trim().slice(0, 120);
+      if (items.length || title) out.push({ title: title, items: items });
+    });
+    return out;
+  }
+  // сворачиваемая плашка: закрыта по умолчанию, состояние держится между перерисовками (опрос базы)
+  function rulesBox(c, where) {
+    var groups = rulesOf(c);
+    if (!groups.length) return null;
+    var n = groups.reduce(function (a, g) { return a + g.items.length; }, 0);
+    var label = !isClient() && S.clients.length > 1 ? t('rulesOf', c.name) : t('rules');
+    return foldable('rules|' + where + '|' + c.id, h('details', { class: 'rules rules-' + where, id: 'rules-' + where },
+      h('summary', null, h('span', { class: 'rl-i', 'aria-hidden': 'true', text: '§' }), h('span', { text: label }), n ? h('span', { class: 'chip seen count', text: String(n) }) : null),
+      h('div', { class: 'rl-body' }, groups.map(function (g) {
+        return h('div', { class: 'rl-g' }, g.title ? h('h4', { text: g.title }) : null, g.items.length ? h('ul', null, g.items.map(function (x) { return h('li', { text: x }); })) : null);
+      }))));
   }
 
   // ---------------- адрес страницы ----------------
@@ -408,6 +633,7 @@
     S.name = LS.get(nameKey()) || '';
     var c = S.clients[0];
     document.title = '9×16 peržiūra' + (isClient() && c ? ' · ' + c.name : '');
+    applyBrand();
   }
   function refreshViews() {
     renderTop();
@@ -440,7 +666,12 @@
           h('span', { class: 'mark' }), h('span', { class: 'bt', text: '9×16' }), h('span', { class: 'bp', text: t('review') }));
     var who = h('span', { class: 'who' });
     if (S.mode === 'team') add(who, ['9×16', h('span', { class: 'tm', text: t('team') })]);
-    else if (S.clients[0]) who.textContent = S.clients[0].name;
+    else if (S.clients[0]) {
+      // с логотипом клиента: в плеере — логотип вместо имени; в списке — ничего (логотип уже крупно на странице)
+      var hasLogo = !!(S.brand && S.brand.logo);
+      if (hasLogo && S.view === 'player') who.appendChild(logoEl('in-top'));
+      else if (!(hasLogo && S.view === 'list')) who.textContent = S.clients[0].name;
+    }
     var help = S.view === 'list' || S.view === 'player'
       ? h('button', { type: 'button', class: 'helpbtn', id: 'help', 'aria-label': t('help'), title: t('help'), onclick: helpSheet }, '?')
       : null;
@@ -570,13 +801,27 @@
     E.main.textContent = '';
     var box = h('div', { class: 'wrap', id: 'list' });
     var shared = isClient() && S.clients[0] ? sharedPlan(S.clients[0]) : null;
-    // общий план клиента — линия этапов на всю ширину сразу под шапкой
-    if (shared) E.main.appendChild(planBlock(shared, 'plan', 'band'));
-    box.appendChild(isClient() ? heroClient() : heroTeam());
+    // общий план клиента — линия этапов на всю ширину сразу под шапкой; с обложкой клиента — на его кадре и с его логотипом
+    var b = isClient() ? S.brand : null;
+    var band = shared ? planBlock(shared, 'plan', 'band') : null;
+    if (b && b.cover) {
+      if (!band) band = h('section', { class: 'plan plan-band', id: 'brand-band' }, h('div', { class: 'wrap' }));
+      band.classList.add('has-cover');
+      band.style.backgroundImage = 'url("' + b.cover + '")';
+      var lgc = logoEl('in-band', true);
+      if (lgc) band.firstChild.insertBefore(lgc, band.firstChild.firstChild);
+    }
+    if (band) E.main.appendChild(band);
+    box.appendChild(isClient() ? heroClient(!(b && b.cover)) : heroTeam());
+    var drafts = [];
     S.clients.forEach(function (c) {
       if (!isClient() && S.clients.length > 1) box.appendChild(h('h2', { class: 'client-h', text: c.name }));
       (c.projects || []).forEach(function (p) {
-        var reels = projReels(p);
+        var reels = projReels(p).filter(function (r) {
+          var rr = S.rref[c.id + '|' + r.id];
+          if (rr && reelInfo(rr).draft) { drafts.push(rr); return false; }
+          return true;
+        });
         if (!reels.length) return;
         // подзаголовок проекта (p.subtitle) не показываем — только короткое название группы
         box.appendChild(h('section', { class: 'proj' },
@@ -585,21 +830,41 @@
           h('div', { class: 'grid', style: '--dc:' + cols(reels.length, 6, 4) + ';--tc:' + cols(reels.length, 4, 3) }, reels.map(function (r) { return card(c, r); }))));
       });
     });
+    // «Juodraščiai» — внизу, свёрнуто: досмотренные без решения и без заметок (или draft: true в каталоге)
+    if (drafts.length) {
+      box.appendChild(foldable('drafts', h('details', { class: 'drafts', id: 'drafts' },
+        h('summary', null, h('span', { text: t('drafts', drafts.length) }), h('small', { text: t('draftsSub') })),
+        h('div', { class: 'grid', style: '--dc:' + cols(drafts.length, 6, 4) + ';--tc:' + cols(drafts.length, 4, 3) }, drafts.map(function (rr) { return card(rr.c, rr.r); })))));
+    }
+    S.clients.forEach(function (c) { add(box, rulesBox(c, 'list')); });
     box.appendChild(footer());
     E.main.appendChild(box);
   }
-  function heroClient() {
+  function heroClient(withLogo) {
     var w = waitingReels();
     var head = w.length
       ? h('h1', null, h('span', { class: 'n', text: String(w.length) }), ' ', t('waitingTail', w.length))
       : [h('h1', { text: t('allDone') }), h('p', { text: t('allDoneSub') })];
-    return h('section', { class: 'hero' }, h('div', { class: 'hero-t' }, head));
+    // «Peržiūrėti: N» — когда есть новые версии (или число к просмотру расходится с числом в заголовке); касание — первый такой ролик
+    var rv = allReels().filter(function (rr) { var x = reelInfo(rr); return x.review && !x.draft; });
+    var nv = rv.filter(function (rr) { return reelInfo(rr).newVer; });
+    rv.sort(function (a, b) { return (reelInfo(b).newVer ? 1 : 0) - (reelInfo(a).newVer ? 1 : 0); });
+    var pill = rv.length && (nv.length || rv.length !== w.length)
+      ? h('button', { type: 'button', class: 'rv-pill', id: 'to-review', onclick: function () { openReel(rv[0].c.id, rv[0].r.id); } },
+          h('i', { 'aria-hidden': 'true' }), t('toReview', rv.length))
+      : null;
+    var all = clientReels(S.clients[0] || { projects: [] }).length;
+    var acts = h('div', { class: 'hero-acts' }, pill,
+      all ? h('button', { type: 'button', class: 'btn ghost sm dl-all', id: 'dl-all', onclick: dlAllSheet }, h('span', { class: 'dl-i', 'aria-hidden': 'true' }), t('downloadAll')) : null);
+    return h('section', { class: 'hero' }, h('div', { class: 'hero-t' }, withLogo ? logoEl('in-hero') : null, head), acts);
   }
   function heroTeam() {
     var rs = allReels(), un = S.notes.filter(unanswered);
     var cnt = { w: 0, c: 0, a: 0 };
     rs.forEach(function (rr) { var s = vState(rr.c.id, rr.latest.id); if (s === 'approved') cnt.a++; else if (s === 'changes') cnt.c++; else cnt.w++; });
     var first = un.slice().sort(function (a, b) { return String(a.created_at).localeCompare(String(b.created_at)); })[0];
+    // «atsisiųsta X iš Y»: клиент скачал текущую (последнюю) версию
+    var dl = rs.filter(function (rr) { return !!reelInfo(rr).dl; }).length;
     return h('section', { class: 'hero' },
       h('p', { class: 'eyebrow', text: t('teamEyebrow') }),
       h('h1', { text: t('teamTitle') }),
@@ -608,10 +873,12 @@
         h('span', { class: 'stat' }, h('b', { text: String(cnt.w) }), t('sWaiting')),
         h('span', { class: 'stat' }, h('b', { text: String(cnt.c) }), t('sChanges')),
         h('span', { class: 'stat' }, h('b', { text: String(cnt.a) }), t('sApproved'))),
+      h('p', { class: 'dl-sum' + (rs.length && dl === rs.length ? ' all' : ''), id: 'dl-sum' }, h('span', { class: 'dl-i', 'aria-hidden': 'true' }), h('b', { text: String(dl) }), ' ', t('sDownloaded', dl, rs.length)),
       first ? h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn primary', id: 'open-unanswered', onclick: function () { openReel(first.client_id, first.reel_id, first.version_id); } }, t('openUnanswered'))) : null);
   }
   function card(c, r) {
     var v = r.versions[r.versions.length - 1], st = vState(c.id, v.id);
+    var rr = S.rref[c.id + '|' + r.id], info = rr ? reelInfo(rr) : {};
     var rn = S.notes.filter(function (n) { return n.client_id === c.id && n.reel_id === r.id; });
     var nv = rn.filter(function (n) { return n.version_id === v.id; }).length;
     var meta = null;
@@ -623,6 +890,7 @@
       if (nv) parts.push(t('nNotes', nv));
       if (un) parts.push(t('nUnanswered', un));
       if (!parts.length && r.versions.length > 1) parts.push(t('nVersions', r.versions.length));
+      if (info.dl) parts.push(t('dlShort'));
       if (parts.length) meta = h('span', { class: 'cm', text: parts.join(' · ') });
     }
     // обложка: картинка из каталога; если её нет — кадр из самого ролика поверх подложки с номером версии
@@ -630,9 +898,10 @@
     var thumb = h('span', { class: 'thumb' }, cover,
       h('span', { class: 'play', 'aria-hidden': 'true' }),
       isClient() ? mark(st) : chip(st),
+      info.newVer ? h('span', { class: 'nv-strip', text: isClient() ? t('newVersionCard') : t('newVersionLine', v.label) }) : null,
       h('span', { class: 'vtag', text: v.label }),
       v.duration ? h('span', { class: 'dur', text: fmtT(v.duration) }) : null);
-    return h('button', { type: 'button', class: 'card', id: 'card-' + r.id, 'data-state': st, onclick: function () { openReel(c.id, r.id); } },
+    return h('button', { type: 'button', class: 'card' + (info.newVer ? ' is-newver' : ''), id: 'card-' + r.id, 'data-state': st, 'data-draft': info.draft ? '1' : null, onclick: function () { openReel(c.id, r.id); } },
       thumb, h('span', { class: 'ct', text: r.title }), meta);
   }
   function frameThumb(src) {
@@ -884,9 +1153,9 @@
     if (!vr || !E.side) return;
     E.phead.textContent = '';
     E.phead.append(h('p', { class: 'eyebrow', text: (isClient() ? '' : vr.c.name + ' · ') + vr.p.title }), h('h1', { id: 'reel-title', text: vr.r.title }));
-    add(E.phead, [variantsRow(vr), changesBox(vr)]);
+    add(E.phead, [variantsRow(vr), changesBox(vr), dlRow(vr)]);
     E.side.textContent = '';
-    add(E.side, [isClient() ? decisionPanel(vr) : teamStatusPanel(vr), planMini(vr.p.plan), notesPanel(vr)]);
+    add(E.side, [isClient() ? decisionPanel(vr) : teamStatusPanel(vr), planMini(vr.p.plan), notesPanel(vr), rulesBox(vr.c, 'player')]);
     renderCmpbar();
   }
   function variantsRow(vr) {
@@ -915,6 +1184,13 @@
       h('span', { class: 'chint', 'aria-hidden': 'true' }),
       h('button', { type: 'button', class: 'cx', id: 'cmp-off', 'aria-label': t('compareOff'), title: t('compareOff'), onclick: toggleCompare }, '×'));
   }
+  // «Atsisiųsti v2» — та версия, что сейчас в плеере; у клиента рядом — «Atsisiųsta ✓», если уже скачал
+  function dlRow(vr) {
+    var s = stOf(vr.c.id, vr.v.id);
+    return h('div', { class: 'dlrow' },
+      dlLink(vr.c, vr.r, vr.v, { class: 'btn ghost sm dl-btn', id: 'dl-btn' }, [h('span', { class: 'dl-i', 'aria-hidden': 'true' }), t('download', vr.rr.vs.length > 1 ? vr.v.label : '')]),
+      isClient() && s && s.downloaded_at ? h('span', { class: 'dl-done', id: 'dl-done', text: t('downloadedMark') }) : null);
+  }
   function changesBox(vr) {
     if (!vr.v.changes) return null;
     return foldable('chg|' + vr.c.id + '|' + vr.v.id, h('details', { class: 'changes', id: 'changes' },
@@ -922,6 +1198,12 @@
   }
   function decisionPanel(vr) {
     var s = stOf(vr.c.id, vr.v.id) || {}, box = h('section', { class: 'panel', id: 'decision' });
+    // новая версия: просим посмотреть; решение по прежней версии к этой не относится
+    var info = vr.latest ? reelInfo(vr.rr) : {};
+    if (info.newVer) {
+      box.append(h('div', { class: 'newver', id: 'newver' }, h('p', { class: 'vt', text: t('newVersionLine', vr.v.label) }),
+        info.prevDecided ? h('p', { class: 'vs', text: t('oldDecisionLine', info.prevDecided.label) }) : null));
+    }
     if (!vr.latest) {
       var latest = vr.rr.latest;
       box.append(h('div', { class: 'verdict info' },
@@ -958,7 +1240,8 @@
     // «ещё не смотрел» / «решения нет» словами не пишем — это уже говорит метка
     var lines = [
       h('li', null, chip(vState(vr.c.id, vr.v.id)), s.decision ? h('span', { class: 'sl-by', text: t('byWhen', s.decided_by, fmtD(s.decided_at)) }) : null),
-      s.seen_at ? h('li', { text: t('seenLine', s.seen_by, fmtD(s.seen_at), s.seen_pct) }) : null
+      s.seen_at ? h('li', { text: t('seenLine', s.seen_by, fmtD(s.seen_at), s.seen_pct) }) : null,
+      h('li', { class: 'dl-line' + (s.downloaded_at ? ' ok' : ''), id: 'dl-line', text: s.downloaded_at ? t('downloadedLine', s.downloaded_by, fmtD(s.downloaded_at)) : t('notDownloadedLine') })
     ];
     return h('section', { class: 'panel', id: 'decision' }, h('h3', { text: t('clientDecision') + ' · ' + vr.v.label }), h('ul', { class: 'st-lines' }, lines));
   }
@@ -1238,6 +1521,7 @@
     });
   }
 
-  window.KAB_APP = { state: S, version: '2026-11-17c' };
+  window.KAB_APP = { state: S, version: '2026-11-26', dlHref: dlHref, dlName: dlName };
+
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();

@@ -44,7 +44,10 @@
   }
 
   function stripClient(c) {
-    return { id: c.id, name: c.name, contact: c.contact || '', projects: c.projects || [] };
+    var x = { id: c.id, name: c.name, contact: c.contact || '', projects: c.projects || [] };
+    if (c.brand) x.brand = c.brand; // слой бренда клиента (логотип, цвет, обложка, шрифт) — klientas.py, ключи logotipas / spalva / virselis / sriftas
+    if (c.rules) x.rules = c.rules; // правила клиента [{title, items}] — klientas.py, ключ taisykles: файл.md
+    return x;
   }
   function findVersion(client, reelId, versionId) {
     var hit = null;
@@ -149,6 +152,18 @@
     this._save(db);
     return delay(90).then(function () { return clone(s); });
   };
+  // клиент нажал «Atsisiųsti»: первое время скачивания остаётся (как seen_at); команде отметка не ставится
+  LocalBackend.prototype.markDownloaded = function (auth, clientId, versionId, by) {
+    var db = this._db(), c = this._clientById(clientId), hit = false;
+    if (!this._allowed(auth, clientId) || this._isAdmin(auth) || !c) return Promise.reject(new Error('forbidden'));
+    (c.projects || []).forEach(function (p) { (p.reels || []).forEach(function (r) { (r.versions || []).forEach(function (v) { if (v.id === versionId) hit = true; }); }); });
+    if (!hit) return Promise.reject(new Error('no_version'));
+    var s = db.statuses.filter(function (x) { return x.client_id === clientId && x.version_id === versionId; })[0];
+    if (!s) { s = { client_id: clientId, version_id: versionId, seen_at: null, seen_by: null, seen_pct: null, decision: null, decided_by: null, decided_at: null }; db.statuses.push(s); }
+    if (!s.downloaded_at) { s.downloaded_at = now(); s.downloaded_by = String(by || '').slice(0, 80) || null; }
+    this._save(db);
+    return delay(60).then(function () { return clone(s); });
+  };
   LocalBackend.prototype._adminNote = function (auth, id, fn) {
     if (!this._isAdmin(auth)) return Promise.reject(new Error('forbidden'));
     var db = this._db(), n = db.notes.filter(function (x) { return x.id === id; })[0];
@@ -173,10 +188,10 @@
     this.key = key;
     this.kind = 'supabase';
   }
-  SupabaseBackend.prototype.rpc = function (fn, body) {
+  SupabaseBackend.prototype.rpc = function (fn, body, keepalive) {
     var self = this;
     return fetch(self.url + '/rest/v1/rpc/' + fn, {
-      method: 'POST',
+      method: 'POST', keepalive: !!keepalive, // keepalive — запрос доживает, даже если в том же нажатии началось скачивание
       headers: { apikey: self.key, Authorization: 'Bearer ' + self.key, 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     }).then(function (r) {
@@ -208,6 +223,11 @@
       p_seen_pct: patch.seenPct == null ? null : Math.round(patch.seenPct),
       p_decision: patch.decision || null, p_by: patch.by || ''
     });
+  };
+  // kab_mark_downloaded — migracija-2026-11-26.sql; пока миграции нет, вызов падает, и страница просто не ставит отметку
+  SupabaseBackend.prototype.markDownloaded = function (auth, clientId, versionId, by) {
+    if (auth.kind !== 'client') return Promise.reject(new Error('forbidden'));
+    return this.rpc('kab_mark_downloaded', { p_token: auth.token, p_version_id: versionId, p_by: by || '' }, true);
   };
   SupabaseBackend.prototype.reply = function (auth, id, text, by) {
     return this.rpc('kab_admin_reply', { p_token: auth.token, p_note_id: id, p_reply: text || '', p_by: by || '' });
