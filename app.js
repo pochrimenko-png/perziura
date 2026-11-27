@@ -40,9 +40,9 @@
       nUnanswered: function (n) { return n + ' ' + ltPl(n, 'neatsakyta', 'neatsakytos', 'neatsakytų'); },
       cardCta: 'Žiūrėti ir komentuoti',
       help: 'Kaip tai veikia?',
-      help1: 'Atidarykite vaizdo įrašą.',
+      help1: 'Viršuje – paruošti vaizdo įrašai, žemiau – laukiantys jūsų peržiūros, dar žemiau – juodraštiniai montažai ir archyvas.',
       help2: 'Norite ką nors pakeisti? Spauskite „Pastaba šioje vietoje“ – laikas pažymimas automatiškai.',
-      help3: 'Jei viskas gerai – „Tvirtinu“, jei ne – „Reikia pataisymų“.',
+      help3: 'Jei viskas gerai – „Viskas gerai“ (vaizdo įrašas pereis į „Paruošta“), jei ne – „Reikia pataisymų“.',
       help4: 'v1, v2 – variantai. „Palyginti“ perjungia juos toje pačioje vietoje.',
       help5: 'Pasibaigus vaizdo įrašui, po kelių sekundžių įsijungia kitas.',
       helpKbd: 'Kompiuteryje: klavišas N – nauja pastaba.',
@@ -57,7 +57,7 @@
       aboutFirst: 'Apie šį variantą',
       whatChanged: function (l) { return 'Kas pakeista (' + l + ')'; },
       noteBtn: 'Pastaba šioje vietoje',
-      approve: 'Tvirtinu',
+      approve: 'Viskas gerai',
       needChanges: 'Reikia pataisymų',
       approvedT: 'Patvirtinta',
       changesT: 'Reikia pataisymų',
@@ -140,7 +140,68 @@
       toReview: function (n) { return 'Peržiūrėti: ' + n; },
       newVersionCard: 'Nauja versija – peržiūrėkite',
       newVersionLine: function (l) { return 'Nauja versija (' + l + ') – peržiūrėkite.'; },
-      oldDecisionLine: function (l) { return 'Sprendimas dėl ' + l + ' šiai versijai negalioja.'; }
+      oldDecisionLine: function (l) { return 'Sprendimas dėl ' + l + ' šiai versijai negalioja.'; },
+      // 27.11: titrai (vieta ir stilius), pasirinktas viršelis, vidinės taisyklės
+      subsPick: 'Pasirinkti', subsChange: 'Keisti',
+      subsPlace: 'Vieta', subsStyle: 'Stilius',
+      subsPx: function (px) { return px + ' px iš 1920'; },
+      subsNone: 'Dar nepasirinkta. Parodykite, kur ir kokie titrai jums patinka – taip ir darysime.',
+      subsNoneTeam: 'Klientas dar nepasirinko.',
+      subsBy: function (who, when) { return 'Pasirinko ' + (who ? who + ', ' : '') + when; },
+      subsByTeam: function (who, when) { return 'Užrašyta po pokalbio' + (who ? ' (' + who + ')' : '') + ', ' + when; },
+      subsSheetSub: 'Bakstelėkite liniją ant telefono arba variantą dešinėje – ten bus titrų apačia. Pilkai – Instagram užrašai ir mygtukai (apytiksliai).',
+      subsZoneTop: 'Instagram viršus', subsZoneBottom: 'Vardas ir aprašymas', subsZoneRight: 'Mygtukai',
+      subsStyleH: 'Titrų stilius',
+      subsNeed: 'Pasirinkite ir vietą, ir stilių.',
+      subsSaved: 'Išsaugota. Titrus dėsime taip, kaip pasirinkote.',
+      subsSample: ['Tai', 'mūsų', 'istorija'],
+      subsSampleLong: 'Tai mūsų istorija, kurią norime papasakoti',
+      coverH: 'Pasirinktas viršelis',
+      coverUsed: 'Viršelį pasirinkote jūs – jį ir naudojame.',
+      coverEmpty: 'Čia bus jūsų pasirinktas viršelis',
+      rulesAutoH: 'Titrai ir viršelis',
+      dirb: 'Dirbtuvės',
+      // 27.11: этажи
+      floor1: 'Paruošta', floor1Sub: 'Patvirtinta – galite siųsti ir atsisiųsti Full HD.',
+      floor2: 'Peržiūrėkite ir patvirtinkite', floor2Sub: 'Po pataisymų. Viskas tinka – spauskite „Viskas gerai“.',
+      floor3: 'Juodraštiniai montažai', floor3Sub: 'Nauji montažai: patinka ar ne, ir trumpas komentaras.',
+      floor4: 'Archyvas', floor4Sub: 'Ankstesnės versijos ir nebenaudojami vaizdo įrašai.',
+      oldVersionsH: 'Ankstesnės versijos',
+      rounds: function (n) { return 'pataisyta ' + n + ' ' + ltPl(n, 'kartą', 'kartus', 'kartų'); },
+      noHdShort: 'laukia Full HD',
+      noHdT: function (n) { return 'Patvirtinta, laukia Full HD: ' + n; },
+      noHdLine: 'Full HD ruošiame – netrukus galėsite atsisiųsti čia.',
+      downloadHd: 'Atsisiųsti Full HD',
+      readyT: 'Paruošta',
+      approveSub: '„Viskas gerai“ – vaizdo įrašas keliauja į „Paruošta“, ten bus Full HD.',
+      archiveLine: 'Archyve. Jei norite jį grąžinti – parašykite pastabą.',
+      draftQ: 'Ar patinka šis montažas?',
+      draftComment: 'Parašyti komentarą',
+      like: 'Patinka', dislike: 'Nepatinka', likeShort: 'Patinka', dislikeShort: 'Nepatinka',
+      likedToast: 'Pažymėta: patinka', dislikedToast: 'Pažymėta: nepatinka', noReaction: 'dar neįvertinta',
+      animH: 'Animacijos', animSub: 'Peržiūrėkite pavyzdžius ir pažymėkite, kurie patinka.',
+      dirbAnim: function (x, y) { return 'animacijos ' + x + ' iš ' + y; },
+      voiceH: 'Balsas (DI)', voiceStub: function (i) { return 'Balsas ' + i; }, voiceSoon: 'pavyzdį įkelsime netrukus',
+      subsLocked: 'Patvirtinta', subsLock: 'Patvirtinti', subsUnlock: 'Atšaukti patvirtinimą',
+      subsLockedToast: 'Pasirinkimas patvirtintas',
+      subsLockedNote: 'Šis pasirinkimas jau patvirtintas. Pakeitimą išsiųsime komandai – ji patvirtins.',
+      subsReqSent: 'Išsiųsta komandai. Pakeisime, kai patvirtins.',
+      subsReqMine: 'Jūsų prašymas laukia komandos:',
+      subsReqTeam: function (by) { return 'Klientas' + (by ? ' (' + by + ')' : '') + ' prašo pakeisti į:'; },
+      subsAccept: 'Priimti',
+      subsReqSum: function (n) { return 'Titrų pakeitimo prašymas: ' + n; },
+      subsH: 'Titrai',
+      dirbOf: function (n) { return 'Dirbtuvės · ' + n; },
+      dirbSub: 'Čia renkatės, kaip atrodys visi vaizdo įrašai: titrai ir viršelis. Vėliau – animacijos ir balsas.',
+      dirbSubsShort: function (l) { return 'Titrai: ' + l; },
+      dirbSubsNone: 'Titrai: dar nepasirinkta',
+      dirbCoverYes: 'viršelis pasirinktas',
+      dirbCoverWait: 'viršelis: laukiame',
+      ruleSubPlace: function (name, px) { return 'Titrų apačia – ' + px + ' px iš 1920' + (name ? ' („' + name + '“)' : '') + '.'; },
+      ruleSubStyle: function (name) { return 'Titrų stilius – ' + name + '.'; },
+      ruleCover: 'Viršelis – jūsų pasirinktas, jį ir naudojame.',
+      ruleCoverSoon: 'Viršelis – jūsų pasirinktas; paveikslėlį įkelsime čia.',
+      rulesInternal: 'Tik komandai'
     },
     en: {
       review: 'review',
@@ -159,9 +220,9 @@
       nUnanswered: function (n) { return n + ' unanswered'; },
       cardCta: 'Watch & comment',
       help: 'How does it work?',
-      help1: 'Open a reel.',
+      help1: 'At the top – ready videos, below – the ones waiting for your review, then draft edits and the archive.',
       help2: 'Want to change something? Tap “Note at this moment” – the time is marked for you.',
-      help3: 'All good – “I approve”. If not – “Needs changes”.',
+      help3: 'All fine – “All good” (the video moves to “Ready”). If not – “Needs changes”.',
       help4: 'v1, v2 are versions. “Compare” switches between them at the same moment.',
       help5: 'When a reel ends, the next one starts after a few seconds.',
       helpKbd: 'On a computer: press N to add a note.',
@@ -176,7 +237,7 @@
       aboutFirst: 'About this version',
       whatChanged: function (l) { return 'What changed (' + l + ')'; },
       noteBtn: 'Note at this moment',
-      approve: 'I approve',
+      approve: 'All good',
       needChanges: 'Needs changes',
       approvedT: 'Approved',
       changesT: 'Needs changes',
@@ -258,7 +319,66 @@
       toReview: function (n) { return 'To review: ' + n; },
       newVersionCard: 'New version – please review',
       newVersionLine: function (l) { return 'New version (' + l + ') – please review.'; },
-      oldDecisionLine: function (l) { return 'The decision on ' + l + ' does not apply to this version.'; }
+      oldDecisionLine: function (l) { return 'The decision on ' + l + ' does not apply to this version.'; },
+      subsPick: 'Choose', subsChange: 'Change',
+      subsPlace: 'Position', subsStyle: 'Style',
+      subsPx: function (px) { return px + ' px of 1920'; },
+      subsNone: 'Not chosen yet. Show us where and what kind of subtitles you like – we will do it that way.',
+      subsNoneTeam: 'The client has not chosen yet.',
+      subsBy: function (who, when) { return 'Chosen by ' + (who ? who + ', ' : '') + when; },
+      subsByTeam: function (who, when) { return 'Noted after the call' + (who ? ' (' + who + ')' : '') + ', ' + when; },
+      subsSheetSub: 'Tap a line on the phone – that is where the bottom of the subtitles goes. Grey – Instagram captions and buttons (approximate).',
+      subsZoneTop: 'Instagram top', subsZoneBottom: 'Name and caption', subsZoneRight: 'Buttons',
+      subsStyleH: 'Subtitle style',
+      subsNeed: 'Please choose both a position and a style.',
+      subsSaved: 'Saved. We will do the subtitles the way you chose.',
+      subsSample: ['This', 'is our', 'story'],
+      subsSampleLong: 'This is the story we want to tell you',
+      coverH: 'Chosen cover',
+      coverUsed: 'You chose this cover – this is the one we use.',
+      coverEmpty: 'Your chosen cover will appear here',
+      rulesAutoH: 'Subtitles and cover',
+      dirb: 'Workshop',
+      floor1: 'Ready', floor1Sub: 'Approved – you can share and download Full HD.',
+      floor2: 'Review and approve', floor2Sub: 'After corrections. All fine – tap “All good”.',
+      floor3: 'Draft edits', floor3Sub: 'New edits: like or not, and a short comment.',
+      floor4: 'Archive', floor4Sub: 'Earlier versions and videos no longer in use.',
+      oldVersionsH: 'Earlier versions',
+      rounds: function (n) { return 'corrected ' + n + (n === 1 ? ' time' : ' times'); },
+      noHdShort: 'waiting for Full HD',
+      noHdT: function (n) { return 'Approved, waiting for Full HD: ' + n; },
+      noHdLine: 'We are preparing Full HD – you will download it here soon.',
+      downloadHd: 'Download Full HD',
+      readyT: 'Ready',
+      approveSub: '“All good” moves the video to “Ready”, where the Full HD will be.',
+      archiveLine: 'In the archive. To bring it back, leave a note.',
+      draftQ: 'Do you like this edit?',
+      draftComment: 'Write a comment',
+      like: 'Like', dislike: 'Dislike', likeShort: 'Like', dislikeShort: 'Dislike',
+      likedToast: 'Marked: like', dislikedToast: 'Marked: dislike', noReaction: 'not rated yet',
+      animH: 'Animation', animSub: 'Watch the samples and mark the ones you like.',
+      dirbAnim: function (x, y) { return 'animation ' + x + ' of ' + y; },
+      voiceH: 'Voice (AI)', voiceStub: function (i) { return 'Voice ' + i; }, voiceSoon: 'sample coming soon',
+      subsLocked: 'Approved', subsLock: 'Approve', subsUnlock: 'Undo approval',
+      subsLockedToast: 'Choice approved',
+      subsLockedNote: 'This choice is already approved. We will send your change to the team to approve.',
+      subsReqSent: 'Sent to the team. We will change it once approved.',
+      subsReqMine: 'Your request is waiting for the team:',
+      subsReqTeam: function (by) { return 'The client' + (by ? ' (' + by + ')' : '') + ' asks to change to:'; },
+      subsAccept: 'Accept',
+      subsReqSum: function (n) { return 'Subtitle change request: ' + n; },
+      subsH: 'Subtitles',
+      dirbOf: function (n) { return 'Workshop · ' + n; },
+      dirbSub: 'Here you choose how all the videos look: subtitles and cover. Later – animation and voice.',
+      dirbSubsShort: function (l) { return 'Subtitles: ' + l; },
+      dirbSubsNone: 'Subtitles: not chosen yet',
+      dirbCoverYes: 'cover chosen',
+      dirbCoverWait: 'cover: waiting',
+      ruleSubPlace: function (name, px) { return 'Bottom of subtitles – ' + px + ' px of 1920' + (name ? ' (“' + name + '”)' : '') + '.'; },
+      ruleSubStyle: function (name) { return 'Subtitle style – ' + name + '.'; },
+      ruleCover: 'Cover – the one you chose; we use it.',
+      ruleCoverSoon: 'Cover – the one you chose; we will upload the image here.',
+      rulesInternal: 'Team only'
     }
   };
   function t(k) {
@@ -384,7 +504,7 @@
     clients: [], notes: [], st: {}, vref: {}, rref: {},
     view: 'loading', cid: null, rid: null, vid: null,
     name: '', device: '', editing: null, sheet: null, seenSent: {}, raf: 0,
-    cmp: false, open: {}, unT: 0
+    cmp: false, open: {}, unT: 0, subsEdit: null, subsDraft: null, reactions: {}
   };
   var E = {};
 
@@ -413,8 +533,21 @@
     var s = stOf(cid, vid) || {};
     return s.decision === 'approved' ? 'approved' : s.decision === 'changes' ? 'changes' : s.seen_at ? 'seen' : 'new';
   }
-  // ждёт клиента: последняя версия без решения и не в «Juodraščiai»
-  function isWaiting(rr) { var s = vState(rr.c.id, rr.latest.id); return (s === 'new' || s === 'seen') && !reelInfo(rr).draft; }
+  // ---------------- этаж ролика (Павел 27.11) ----------------
+  // 0 — образцы «Dirbtuvės» (проект kind: 'animacijos'), 1 Paruošta, 2 Peržiūrėkite / patvirtinkite, 3 Juodraštiniai montažai, 4 Archyvas.
+  // Порядок: архив (stage 4 или старый draft: true) → готово (stage 1 или клиент нажал «Viskas gerai» = approved у последней версии)
+  // → stage 2 / 3 из каталога → без отметки — 3 (новый черновой монтаж). Новая версия после правок: в каталоге stage: 2.
+  function floorOf(rr) {
+    if (rr.p && rr.p.kind === 'animacijos') return 0;
+    var r = rr.r, st = +r.stage;
+    if (st === 4 || r.draft === true) return 4;
+    var s = stOf(rr.c.id, rr.latest.id);
+    if (st === 1 || (s && s.decision === 'approved')) return 1;
+    if (st === 2 || st === 3) return st;
+    return 3;
+  }
+  // ждёт клиента: этаж 2 без решения по последней версии
+  function isWaiting(rr) { return floorOf(rr) === 2 && !(stOf(rr.c.id, rr.latest.id) || {}).decision; }
   function clientNoteOn(cid, rid, vid) {
     return S.notes.some(function (n) { return n.client_id === cid && n.side !== 'team' && (rid == null || n.reel_id === rid) && (vid == null || n.version_id === vid); });
   }
@@ -428,11 +561,10 @@
     var cid = rr.c.id, v = rr.latest, s = stOf(cid, v.id) || {};
     var review = !s.seen_at && !s.decision;
     var earlier = rr.vs.slice(0, -1).some(function (x) { var o = stOf(cid, x.id); return !!(o && (o.seen_at || o.decision)) || clientNoteOn(cid, null, x.id); });
-    var auto = !!s.seen_at && !s.decision && !clientNoteOn(cid, rr.r.id, null) && !S.seenSent[v.id];
-    var flag = rr.r.draft;
     var prevDec = null;
     for (var i = rr.vs.length - 2; i >= 0 && !prevDec; i--) { var o = stOf(cid, rr.vs[i].id); if (o && o.decision) prevDec = rr.vs[i]; }
-    return { review: review, newVer: review && earlier, draft: flag === true ? true : flag === false ? false : auto, prevDecided: prevDec, dl: s.downloaded_at ? s : null };
+    // автоматических «Juodraščiai» больше нет (иначе этаж 2 пустел бы, пока клиент смотрит): архив — только stage 4 / draft: true
+    return { review: review, newVer: review && earlier, draft: floorOf(rr) === 4, prevDecided: prevDec, dl: s.downloaded_at ? s : null };
   }
   function byT(a, b) {
     var at = a.t == null ? -1 : +a.t, bt = b.t == null ? -1 : +b.t;
@@ -442,10 +574,7 @@
   function unanswered(n) { return n.side !== 'team' && !n.reply && !n.fixed; }
   function curRef() { return S.vref[S.cid + '|' + S.vid] || null; }
   function curV() { var r = curRef(); return r ? r.v : null; }
-  function waitingReels() {
-    return allReels().filter(isWaiting)
-      .sort(function (a, b) { return (vState(a.c.id, a.latest.id) === 'new' ? 0 : 1) - (vState(b.c.id, b.latest.id) === 'new' ? 0 : 1); });
-  }
+  function waitingReels() { return allReels().filter(isWaiting); }
   function projReels(p) { return (p.reels || []).filter(function (r) { return (r.versions || []).length; }); }
   // ролики клиента в порядке каталога (проекты → ролики)
   function clientReels(c) {
@@ -483,9 +612,9 @@
   // 26.11: финал Full HD на Google Диске (поле dl у версии) — только адреса Диска; нет dl — копия просмотра (720p) из бакета
   function driveDl(u) { return /^https:\/\/(drive\.google\.com|drive\.usercontent\.google\.com)\//.test(String(u || '')) ? String(u) : ''; }
   function dlLink(c, r, v, attrs, label) {
-    var name = dlName(c, r, v), drv = driveDl(v.dl);
+    var name = dlName(c, r, v), drv = driveDl(v.dl), file = drv ? '' : safeUrl(v.dl); // https:// (бакет) или относительный путь (демо)
     var a = h('a', Object.assign(drv ? { href: drv, target: '_blank', rel: 'noopener', 'data-v': v.id }
-      : { href: dlHref(v.src, name), download: name, rel: 'noopener', 'data-v': v.id }, attrs || {}), label);
+      : { href: dlHref(file || v.src, name), download: name, rel: 'noopener', 'data-v': v.id }, attrs || {}), label);
     a.addEventListener('click', function () { markDl(c.id, v.id); });
     return a;
   }
@@ -511,7 +640,7 @@
   // на компьютере ещё «Visus iš eilės» — те же ссылки по очереди
   function dlAllSheet() {
     var list = [];
-    S.clients.forEach(function (c) { clientReels(c).forEach(function (rr) { list.push(rr); }); });
+    S.clients.forEach(function (c) { floorReels(c, 1).forEach(function (rr) { if (rr.latest.dl) list.push(rr); }); });
     openSheet(function (pan) {
       var links = [];
       var ul = h('ul', { class: 'dl-list', id: 'dl-list' }, list.map(function (rr) {
@@ -548,17 +677,227 @@
     });
     return out;
   }
+  // группа «Titrai ir viršelis» — из живого выбора клиента (subtitles) и выбранной обложки (chosenCover), не из файла правил
+  function autoRules(c) {
+    var items = [], sc = subsOf(c), cv = coverOf(c);
+    if (sc) {
+      items.push(t('ruleSubPlace', sc.level ? loc(sc.level.name) : '', sc.px));
+      if (sc.styleDef) items.push(t('ruleSubStyle', loc(sc.styleDef.name)));
+    }
+    if (cv) items.push(cv.src ? t('ruleCover') : t('ruleCoverSoon'));
+    return items.length ? [{ title: t('rulesAutoH'), items: items }] : [];
+  }
   // сворачиваемая плашка: закрыта по умолчанию, состояние держится между перерисовками (опрос базы)
+  // внутренние правила (rulesInternal) приходят только по ссылке команды — kab_admin_state; клиенту их в данных нет
   function rulesBox(c, where) {
-    var groups = rulesOf(c);
-    if (!groups.length) return null;
-    var n = groups.reduce(function (a, g) { return a + g.items.length; }, 0);
+    var groups = rulesOf(c).concat(autoRules(c));
+    var inner = isClient() ? [] : rulesOf({ rules: c.rulesInternal });
+    if (!groups.length && !inner.length) return null;
+    var n = groups.concat(inner).reduce(function (a, g) { return a + g.items.length; }, 0);
     var label = !isClient() && S.clients.length > 1 ? t('rulesOf', c.name) : t('rules');
+    var grp = function (g, internal) {
+      return h('div', { class: 'rl-g' + (internal ? ' rl-int' : '') },
+        g.title || internal ? h('h4', null, internal ? h('span', { class: 'chip team', text: t('rulesInternal') }) : null, g.title ? h('span', { text: g.title }) : null) : null,
+        g.items.length ? h('ul', null, g.items.map(function (x) { return h('li', { text: x }); })) : null);
+    };
     return foldable('rules|' + where + '|' + c.id, h('details', { class: 'rules rules-' + where, id: 'rules-' + where },
       h('summary', null, h('span', { class: 'rl-i', 'aria-hidden': 'true', text: '§' }), h('span', { text: label }), n ? h('span', { class: 'chip seen count', text: String(n) }) : null),
-      h('div', { class: 'rl-body' }, groups.map(function (g) {
-        return h('div', { class: 'rl-g' }, g.title ? h('h4', { text: g.title }) : null, g.items.length ? h('ul', null, g.items.map(function (x) { return h('li', { text: x }); })) : null);
-      }))));
+      h('div', { class: 'rl-body' }, groups.map(function (g) { return grp(g, false); }), inner.map(function (g) { return grp(g, true); }))));
+  }
+
+  // ---------------- «Titrai» (vieta ir stilius) ir pasirinktas viršelis ----------------
+  // Уровни — низ строки субтитров в px из 1920 (кадр 1080×1920). Зоны Instagram — примерно, по нашей карточке c040
+  // (knowledge/montazh-stol): важный текст 250–1500 px по высоте, справа от 972 px — кнопки; «нижние 35 %» = 1250 px.
+  var SUB_H = 1920, SUB_W = 1080;
+  var SUB_ZONES = { top: 250, bottom: 1500, right: 972, btnTop: 1020, btnBottom: 1680 };
+  var SUB_LEVELS = [
+    { px: 1150, name: { lt: 'Aukščiau', en: 'Higher' }, sub: { lt: 'arčiau kadro vidurio', en: 'closer to the middle' } },
+    { px: 1250, name: { lt: 'Saugi zona', en: 'Safe zone' }, sub: { lt: 'Instagram patarimas: apatiniai 35 % – laisvi', en: 'Instagram advice: bottom 35 % kept clear' } },
+    { px: 1345, name: { lt: 'Žemiau', en: 'Lower' }, sub: { lt: 'virš aprašymo, su atsarga', en: 'above the caption, with room to spare' } },
+    { px: 1440, name: { lt: 'Žemai', en: 'Low' }, sub: { lt: 'tiesiai virš vardo ir aprašymo', en: 'right above the name and caption' } }
+  ];
+  var SUB_STYLES = [
+    { id: 'zodis', name: { lt: 'Žodis po žodžio', en: 'Word by word' }, sub: { lt: 'žodžiai atsiranda kalbant, tariamas – ryškesnis', en: 'words appear as spoken, the current one stands out' } },
+    { id: 'zodis-kursyvas', name: { lt: 'Žodis po žodžio + pagrindinis žodis kursyvu', en: 'Word by word + key word in italics' }, sub: { lt: 'kaip „Žodis po žodžio“, o vienas svarbiausias žodis – kursyvu', en: 'like “Word by word”, with one key word in italics' } },
+    { id: 'demele', name: { lt: 'Ant minkštos dėmės', en: 'On a soft pad' }, sub: { lt: 'trumpa frazė ant permatomo fono', en: 'a short phrase on a see-through pad' } },
+    { id: 'sakinys', name: { lt: 'Visas sakinys', en: 'Whole sentence' }, sub: { lt: 'ramūs klasikiniai titrai, 1–2 eilutės', en: 'calm classic subtitles, 1–2 lines' } }
+  ];
+  function levelOf(px) { return SUB_LEVELS.filter(function (l) { return l.px === px; })[0] || null; }
+  function styleDefOf(id) { return SUB_STYLES.filter(function (x) { return x.id === id; })[0] || null; }
+  function subsOf(c) {
+    var s = c && c.subtitles;
+    if (!s || typeof s !== 'object') return null;
+    var px = Math.round(+s.bottom_px);
+    if (!(px >= 900 && px <= 1700)) return null;
+    var rp = Math.round(+s.req_bottom_px), req = rp >= 900 && rp <= 1700 && s.req_style
+      ? { px: rp, level: levelOf(rp), style: String(s.req_style), styleDef: styleDefOf(String(s.req_style)), by: s.req_by || '', at: s.req_at || '' } : null;
+    return { px: px, level: levelOf(px), style: String(s.style || ''), styleDef: styleDefOf(String(s.style || '')), by: s.chosen_by || '', side: s.side === 'team' ? 'team' : 'client', at: s.chosen_at || '', locked: !!s.locked, req: req };
+  }
+  // chosenCover — {src, caption}; объект без src = «выбрали, картинку ещё не положили» (заглушка)
+  function coverOf(c) {
+    var x = c && c.chosenCover;
+    if (!x || typeof x !== 'object') return null;
+    return { src: safeUrl(x.src), caption: loc(x.caption).trim().slice(0, 200) };
+  }
+  // образец стиля: тот же текст во всех четырёх, рисуется CSS (картинок и шрифтов не грузим)
+  function sampleEl(style) {
+    var w = t('subsSample');
+    if (style === 'sakinys') return h('span', { class: 'smp st-sakinys' }, t('subsSampleLong'));
+    if (style === 'demele') return h('span', { class: 'smp st-demele' }, w.join(' '));
+    if (style === 'zodis-kursyvas') return h('span', { class: 'smp st-zodis st-kurs' }, h('b', { text: w[0] }), ' ', h('b', { class: 'hl', text: w[1] }), ' ', h('em', { text: w[2] }));
+    return h('span', { class: 'smp st-zodis' }, h('b', { text: w[0] }), ' ', h('b', { text: w[1] }), ' ', h('b', { class: 'hl', text: w[2] }));
+  }
+  // схема телефона 9:16: зоны интерфейса Instagram, линия субтитров; pick — режим выбора (линии уровней можно нажимать)
+  function phoneEl(px, style, pick) {
+    var pc = function (v, of) { return (v / of * 100).toFixed(2) + '%'; };
+    var ph = h('div', { class: 'ph' + (pick ? ' pick' : ''), 'aria-hidden': pick ? null : 'true' },
+      h('span', { class: 'z z-top', style: 'height:' + pc(SUB_ZONES.top, SUB_H) }, pick ? h('i', { text: t('subsZoneTop') }) : null),
+      h('span', { class: 'z z-bot', style: 'top:' + pc(SUB_ZONES.bottom, SUB_H) }, h('span', { class: 'zb-av' }), h('span', { class: 'zb-l1' }), h('span', { class: 'zb-l2' }), pick ? h('i', { text: t('subsZoneBottom') }) : null),
+      h('span', { class: 'z z-right', style: 'left:' + pc(SUB_ZONES.right, SUB_W) + ';top:' + pc(SUB_ZONES.btnTop, SUB_H) + ';height:' + pc(SUB_ZONES.btnBottom - SUB_ZONES.btnTop, SUB_H) }, [0, 1, 2, 3].map(function () { return h('span', { class: 'zr-b' }); })));
+    if (pick) {
+      SUB_LEVELS.forEach(function (l) {
+        ph.appendChild(h('button', { type: 'button', class: 'lv' + (l.px === px ? ' on' : ''), id: 'lv-' + l.px, 'data-px': String(l.px), style: 'top:' + pc(l.px, SUB_H), 'aria-label': loc(l.name) + ' – ' + t('subsPx', l.px), onclick: function () { pick(l.px); } }, h('span', { class: 'lv-t', text: String(l.px) })));
+      });
+    }
+    if (px) ph.appendChild(h('span', { class: 'sub-line', style: 'bottom:' + pc(SUB_H - px, SUB_H) }, sampleEl(style || 'zodis')));
+    return ph;
+  }
+  function coverEl(c) {
+    var cv = coverOf(c);
+    var pic = cv && cv.src ? h('img', { src: cv.src, alt: t('coverH'), loading: 'lazy', decoding: 'async' }) : h('span', { class: 'cv-empty', text: t('coverEmpty') });
+    return h('figure', { class: 'cv' + (cv && cv.src ? '' : ' is-empty'), id: 'cover-' + c.id },
+      h('span', { class: 'cv-pic' }, pic),
+      h('figcaption', null, cv && cv.src ? h('span', { text: cv.caption || t('coverUsed') }) : (cv && cv.caption ? h('span', { text: cv.caption }) : null)));
+  }
+  // ---------------- «Dirbtuvės» — мастерская клиента на главной (Павел 27.11) ----------------
+  // Выборы клиента: субтитры (уровень и стиль), обложка; позже — анимации и голос. Раскрывается на месте, без перехода
+  // и без листа поверх страницы. Нет выбора субтитров — открыт сам (у клиента), иначе свёрнут; состояние держится между перерисовками.
+  function subsWho(sc) {
+    var when = sc.at ? fmtD(sc.at) : '';
+    return h('p', { class: 'subs-who' }, sc.side === 'team' ? t('subsByTeam', sc.by, when) : t('subsBy', sc.by, when));
+  }
+  function dirbtuves(c) {
+    var sc = subsOf(c), cv = coverOf(c), many = !isClient() && S.clients.length > 1;
+    var key = 'dirb|' + c.id;
+    if (S.open[key] === undefined && !sc && isClient()) S.open[key] = true;
+    var editing = S.subsEdit === c.id;
+    var anims = animSamples(c);
+    // короткая строка в заголовке: что уже выбрано
+    var bits = [sc ? t('dirbSubsShort', sc.level ? loc(sc.level.name) : t('subsPx', sc.px)) + (sc.locked ? ' ✓' : '') : t('dirbSubsNone'),
+      cv && cv.src ? t('dirbCoverYes') : t('dirbCoverWait')];
+    if (anims.length) bits.push(t('dirbAnim', anims.filter(function (rr) { return !!reactionOf(c.id, rr.latest.id); }).length, anims.length));
+    var req = sc && sc.req;
+    var titrai = h('section', { class: 'dirb-sec subs' + (sc ? '' : ' is-none'), id: 'subs-' + c.id },
+      h('div', { class: 'subs-h' }, h('h3', null, t('subsH'), sc && sc.locked ? h('span', { class: 'chip approved', id: 'subs-locked', text: t('subsLocked') }) : null),
+        editing ? null : h('div', { class: 'subs-acts' },
+          !isClient() && sc ? h('button', { type: 'button', class: 'btn ghost sm', id: 'subs-lock-' + c.id, onclick: function () { lockSubs(c, !sc.locked); } }, sc.locked ? t('subsUnlock') : t('subsLock')) : null,
+          h('button', { type: 'button', class: 'btn sm' + (sc ? ' ghost' : ' primary'), id: 'subs-edit-' + c.id, onclick: function () { S.subsEdit = c.id; S.editing = 'subs'; renderList(); var el = document.getElementById('subs-' + c.id); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start' }); } }, sc ? t('subsChange') : t('subsPick')))),
+      editing ? subsEditor(c) : h('div', { class: 'subs-body' },
+        h('div', { class: 'subs-ph', 'aria-hidden': 'true' }, phoneEl(sc ? sc.px : 0, sc ? sc.style : '', null)),
+        sc ? h('div', { class: 'subs-info' },
+          h('dl', null,
+            h('dt', { text: t('subsPlace') }), h('dd', null, sc.level ? h('b', { text: loc(sc.level.name) }) : null, sc.level ? ' · ' : null, t('subsPx', sc.px)),
+            h('dt', { text: t('subsStyle') }), h('dd', null, h('b', { text: sc.styleDef ? loc(sc.styleDef.name) : sc.style }))),
+          subsWho(sc),
+          // запрос клиента на изменение закреплённого выбора: клиент видит «ждём команду», команда — «Priimti»
+          req ? h('div', { class: 'subs-req', id: 'subs-req-' + c.id },
+            h('p', { text: (isClient() ? t('subsReqMine') : t('subsReqTeam', req.by)) + ' ' + (req.level ? loc(req.level.name) : t('subsPx', req.px)) + ' · ' + (req.styleDef ? loc(req.styleDef.name) : req.style) }),
+            !isClient() ? h('button', { type: 'button', class: 'btn ok sm', id: 'subs-accept-' + c.id, onclick: function () { acceptReq(c, req); } }, t('subsAccept')) : null) : null)
+          : h('div', { class: 'subs-info' }, h('p', { class: 'subs-none', text: isClient() ? t('subsNone') : t('subsNoneTeam') }))));
+    var virselis = h('section', { class: 'dirb-sec cover-sec' }, h('h3', { text: t('coverH') }), coverEl(c));
+    // анимации: образцы из проекта kind: 'animacijos' — смотреть прямо здесь, «patinka / nepatinka»
+    var anim = anims.length ? h('section', { class: 'dirb-sec anim-sec', id: 'anim-' + c.id }, h('h3', { text: t('animH') }), h('p', { class: 'dirb-sub', text: t('animSub') }),
+      h('div', { class: 'samples' }, anims.map(function (rr) {
+        var v = rr.latest, re = reactionOf(c.id, v.id);
+        var vid = h('video', { controls: true, playsinline: true, preload: 'none', poster: v.poster || null, src: v.src, controlslist: 'nodownload' });
+        vid.playsInline = true;
+        return h('div', { class: 'sample', id: 'sample-' + rr.r.id }, vid, h('b', { text: rr.r.title }),
+          isClient() ? reactButtons(c.id, v.id, 'an-' + rr.r.id, keepScroll(renderList))
+            : h('span', { class: 'cm', text: re ? (re === 'like' ? t('like') : t('dislike')) : t('noReaction') }));
+      }))) : null;
+    // голос ИИ: catalog.voices [{id, title, src}]; пока пусто — заглушка-список (без кнопок)
+    var voices = Array.isArray(c.voices) ? c.voices.filter(function (x) { return x && x.id; }) : [];
+    var balsas = h('section', { class: 'dirb-sec voice-sec', id: 'voice-' + c.id }, h('h3', { text: t('voiceH') }),
+      voices.length
+        ? h('div', { class: 'samples voices' }, voices.map(function (x) {
+            var re = reactionOf(c.id, x.id), src = safeUrl(x.src);
+            return h('div', { class: 'sample voice', id: 'v-' + x.id }, h('b', { text: loc(x.title) || x.id }), src ? h('audio', { controls: true, preload: 'none', src: src }) : null,
+              isClient() ? reactButtons(c.id, x.id, 'vo-' + x.id, keepScroll(renderList)) : h('span', { class: 'cm', text: re ? (re === 'like' ? t('like') : t('dislike')) : t('noReaction') }));
+          }))
+        : h('ul', { class: 'voice-stub', id: 'voice-stub' }, [1, 2, 3].map(function (i) { return h('li', null, h('b', { text: t('voiceStub', i) }), h('span', { text: t('voiceSoon') })); })));
+    return foldable(key, h('details', { class: 'dirbtuves' + (sc ? '' : ' is-none'), id: 'dirbtuves-' + c.id },
+      h('summary', null, h('span', { class: 'rl-i', 'aria-hidden': 'true', text: '✎' }),
+        h('span', { class: 'dirb-t' }, h('b', { text: many ? t('dirbOf', c.name) : t('dirb') }), h('small', { text: bits.join(' · ') }))),
+      h('div', { class: 'dirb-body' }, h('p', { class: 'dirb-sub', text: t('dirbSub') }), titrai, anim, virselis, balsas)));
+  }
+  // образцы анимаций: ролики проекта с kind: 'animacijos' (у SHIZURI — «Animacijų stiliai»); на этажах их нет
+  function animSamples(c) { return clientReels(c).filter(function (rr) { return rr.p.kind === 'animacijos'; }); }
+  function keepScroll(fn) { return function () { var y = window.scrollY; fn(); window.scrollTo(0, y); }; }
+  function lockSubs(c, locked) {
+    S.backend.lockSubtitles(S.auth, c.id, locked).then(function (rec) { c.subtitles = rec; keepScroll(renderList)(); toast(locked ? t('subsLockedToast') : t('undone')); })
+      .catch(function () { toast(t('err')); });
+  }
+  function acceptReq(c, req) {
+    withName(function () {
+      S.backend.setSubtitles(S.auth, c.id, { bottom_px: req.px, style: req.style, by: S.name }).then(function (rec) { c.subtitles = rec; keepScroll(renderList)(); toast(t('subsSaved')); })
+        .catch(function () { toast(t('err')); });
+    });
+  }
+  // выбор на месте: схема телефона с уровнями + 4 образца стиля; имя спрашиваем здесь же, как у заметки
+  function subsEditor(c) {
+    var cid = c.id, sc = subsOf(c), cur = S.subsDraft && S.subsDraft.cid === cid ? S.subsDraft : { cid: cid, px: sc ? sc.px : 0, style: sc && sc.styleDef ? sc.style : '' };
+    S.subsDraft = cur;
+    var needName = !S.name;
+    var box = h('div', { class: 'subs-edit', id: 'subs-editor' });
+    var err = h('p', { class: 'err', id: 'subs-err', hidden: true });
+    var phBox = h('div', { class: 'subs-pickph' });
+    var lvList = h('div', { class: 'lv-list', role: 'radiogroup', 'aria-label': t('subsPlace') });
+    var stGrid = h('div', { class: 'st-grid', role: 'radiogroup', 'aria-label': t('subsStyleH') });
+    var nameIn = needName ? h('input', { type: 'text', id: 'subs-name', autocomplete: 'name', placeholder: t('namePh'), maxlength: 80 }) : null;
+    var draw = function () {
+      phBox.textContent = '';
+      phBox.appendChild(phoneEl(cur.px, cur.style || 'zodis', function (px) { cur.px = px; draw(); }));
+      lvList.textContent = '';
+      SUB_LEVELS.forEach(function (l) {
+        lvList.appendChild(h('button', { type: 'button', class: 'lv-opt' + (l.px === cur.px ? ' on' : ''), id: 'lvo-' + l.px, role: 'radio', 'aria-checked': l.px === cur.px ? 'true' : 'false', onclick: function () { cur.px = l.px; draw(); } },
+          h('b', { text: loc(l.name) }), h('span', { text: loc(l.sub) }), h('small', { text: t('subsPx', l.px) })));
+      });
+      if (cur.px && !levelOf(cur.px)) lvList.appendChild(h('p', { class: 'sub', text: t('subsPx', cur.px) }));
+      stGrid.textContent = '';
+      SUB_STYLES.forEach(function (x) {
+        stGrid.appendChild(h('button', { type: 'button', class: 'st-opt' + (x.id === cur.style ? ' on' : ''), id: 'st-' + x.id, role: 'radio', 'aria-checked': x.id === cur.style ? 'true' : 'false', onclick: function () { cur.style = x.id; draw(); } },
+          h('span', { class: 'st-frame', 'aria-hidden': 'true' }, sampleEl(x.id)), h('b', { text: loc(x.name) }), h('span', { text: loc(x.sub) })));
+      });
+    };
+    draw();
+    var stop = function () { S.subsEdit = null; S.subsDraft = null; if (S.editing === 'subs') S.editing = null; };
+    var save = h('button', { type: 'button', class: 'btn primary', id: 'subs-save' }, t('save'));
+    var cancel = h('button', { type: 'button', class: 'btn ghost', id: 'subs-cancel', onclick: function () { stop(); var y = window.scrollY; renderList(); window.scrollTo(0, y); } }, t('cancel'));
+    add(box, [sc && sc.locked && isClient() ? h('p', { class: 'subs-lock-note', id: 'subs-lock-note', text: t('subsLockedNote') }) : null,
+      h('p', { class: 'sub', text: t('subsSheetSub') }),
+      h('div', { class: 'subs-pick' }, phBox, lvList),
+      h('h4', { text: t('subsStyleH') }), stGrid,
+      needName ? h('label', { for: 'subs-name' }, t('nameLabel'), h('span', { class: 'sub', text: t('nameWhy') }), nameIn) : null,
+      err, h('div', { class: 'row' }, save, cancel)]);
+    save.addEventListener('click', function () {
+      var nm = nameIn ? nameIn.value.trim() : S.name;
+      if (!cur.px || !cur.style) { err.textContent = t('subsNeed'); err.hidden = false; return; }
+      if (!nm) { err.textContent = t('needName'); err.hidden = false; nameIn.focus(); return; }
+      if (nameIn) setName(nm);
+      err.hidden = true; save.disabled = true; save.textContent = t('saving');
+      S.backend.setSubtitles(S.auth, cid, { bottom_px: cur.px, style: cur.style, by: S.name }).then(function (rec) {
+        c.subtitles = rec;
+        stop();
+        var y = window.scrollY; // перерисовка списка не должна уносить наверх
+        renderList();
+        window.scrollTo(0, y);
+        toast(rec && rec.req_bottom_px && isClient() ? t('subsReqSent') : t('subsSaved'));
+      }).catch(function () {
+        save.disabled = false; save.textContent = t('save');
+        err.textContent = t('saveErr'); err.hidden = false;
+      });
+    });
+    return box;
   }
 
   // ---------------- адрес страницы ----------------
@@ -632,6 +971,8 @@
     S.notes = d.notes || [];
     S.st = {};
     (d.statuses || []).forEach(function (s) { S.st[s.client_id + '|' + s.version_id] = s; });
+    S.reactions = {};
+    (d.reactions || []).forEach(function (x) { if (x && x.reaction) S.reactions[x.client_id + '|' + x.item_id] = x; });
     index();
     S.name = LS.get(nameKey()) || '';
     var c = S.clients[0];
@@ -745,45 +1086,9 @@
     }, 'help-sheet');
   }
 
-  // ---------------- план «Kas toliau» (projects[].plan) ----------------
-  // plan: [{title, text, now}] — title/text строка или {lt, en}; now: true — текущий шаг; done: true — пройденный.
-  function planInfo(plan) {
-    if (!Array.isArray(plan)) return null;
-    var steps = plan.filter(function (s) { return s && typeof s === 'object' && (loc(s.title) || loc(s.text)); });
-    if (!steps.length) return null;
-    var cur = -1, lastDone = -1;
-    steps.forEach(function (s, i) { if (s.now && cur < 0) cur = i; if (s.done) lastDone = i; });
-    if (cur < 0) cur = lastDone + 1;
-    return { steps: steps, cur: cur };
-  }
-  function stepText(s) { return loc(s.text) || loc(s.title); }
-  // только линия этапов: без «Dabar: … / Toliau: …» (решение Павла 17.11); заголовок — для экранных читалок
-  // kind: 'band' — на всю ширину под шапкой (клиент, общий план); 'inline' — у проекта; 'compact' — в плеере
-  function planBlock(plan, id, kind) {
-    var pi = planInfo(plan);
-    if (!pi) return null;
-    var steps = h('ol', { class: 'pl-steps', style: '--n:' + pi.steps.length }, pi.steps.map(function (s, i) {
-      var st = i < pi.cur ? 'done' : i === pi.cur ? 'now' : 'next';
-      return h('li', { class: st, 'aria-current': st === 'now' ? 'step' : null, title: stepText(s) },
-        h('i', { 'aria-hidden': 'true', text: st === 'done' ? '✓' : String(i + 1) }), h('span', { text: loc(s.title) || stepText(s) }));
-    }));
-    var head = h('h2', { class: 'sr', text: t('planTitle') + (pi.steps[pi.cur] ? ' · ' + t('planNow') + ': ' + stepText(pi.steps[pi.cur]) : ' · ' + t('planAllDone')) });
-    var cls = 'plan plan-' + (kind || 'inline') + (pi.cur >= pi.steps.length ? ' all-done' : '');
-    if (kind === 'band') return h('section', { class: cls, id: id, 'aria-label': t('planTitle') }, h('div', { class: 'wrap' }, head, steps));
-    return h('section', { class: cls, id: id, 'aria-label': t('planTitle') }, head, steps);
-  }
-  function planMini(plan) { return planBlock(plan, 'plan-mini', 'compact'); }
+  // линии этапов «Kas toliau» больше нет (Павел 27.11): projects[].plan в каталоге страница не показывает
   // колонки сетки: ряды заполнены целиком, без пустого места справа (оно и давало «сдвиг влево»)
   function cols(n, max, min) { return n <= max ? Math.max(n, min) : Math.ceil(n / Math.ceil(n / max)); }
-  // один план на все проекты клиента — показываем один раз, рядом с заголовком
-  function sharedPlan(c) {
-    var ps = (c.projects || []).filter(function (p) { return projReels(p).length; });
-    if (!ps.length || !planInfo(ps[0].plan)) return null;
-    var k0 = JSON.stringify(ps[0].plan);
-    for (var i = 1; i < ps.length; i++) if (JSON.stringify(ps[i].plan || null) !== k0) return null;
-    return ps[0].plan;
-  }
-
   // ---------------- список ----------------
   function chip(st) {
     var key = st === 'new' && !isClient() ? 'chip_new_team' : 'chip_' + st;
@@ -794,51 +1099,80 @@
     return h('span', { class: 'mk ' + st, role: 'img', 'aria-label': t('chip_' + st), title: t('chip_' + st) });
   }
   function showList() {
-    S.view = 'list'; S.rid = null; S.vid = null; S.editing = null;
+    S.view = 'list'; S.rid = null; S.vid = null; S.editing = null; S.subsEdit = null; S.subsDraft = null;
     pauseVideo(); stopRaf(); hideUpnext();
     E.video = null; E.player = null; E.upnext = null; E.cmpbar = null;
     renderTop(); renderList();
     window.scrollTo(0, 0);
   }
+  // ---------------- главная: этажи (Павел 27.11) ----------------
+  // 1 Paruošta → 2 Peržiūrėkite / patvirtinkite → 3 Juodraštiniai montažai → 4 Archyvas; без тем и без линии этапов.
+  // Ниже — «Dirbtuvės» (выборы клиента) и мелко «Taisyklės».
+  function floorReels(c, f) {
+    var out = clientReels(c).filter(function (rr) { return floorOf(rr) === f; });
+    if (f === 2) {
+      // свежая правка сверху: по дате последней версии (created), без даты — в конце, дальше порядок каталога
+      out = out.map(function (rr, i) { return { rr: rr, i: i, at: String(rr.latest.created || '') }; })
+        .sort(function (a, b) { return a.at === b.at ? a.i - b.i : a.at < b.at ? 1 : -1; })
+        .map(function (x) { return x.rr; });
+    }
+    return out;
+  }
+  // версии старше двух последних — в «Archyvas», отдельным списком (ссылки открывают именно эту версию)
+  function oldVersions(c) {
+    var out = [];
+    clientReels(c).forEach(function (rr) {
+      if (floorOf(rr) === 4) return;
+      rr.vs.slice(0, Math.max(0, rr.vs.length - 2)).forEach(function (v) { out.push({ rr: rr, v: v }); });
+    });
+    return out;
+  }
+  function floorHead(f, extra) {
+    return h('div', { class: 'floor-h' }, h('span', { class: 'fl-n', 'aria-hidden': 'true', text: String(f) }),
+      h('div', { class: 'fl-t' }, h('h2', { text: t('floor' + f) }), h('small', { text: t('floor' + f + 'Sub') })), extra || null);
+  }
+  function grid(cards, small) {
+    var n = cards.length;
+    return h('div', { class: 'grid' + (small ? ' grid-sm' : ''), style: small ? '--dc:' + cols(n, 8, 6) + ';--tc:' + cols(n, 5, 4) : '--dc:' + cols(n, 6, 4) + ';--tc:' + cols(n, 4, 3) }, cards);
+  }
+  function floorsOf(c, box) {
+    var many = !isClient() && S.clients.length > 1;
+    if (many) box.appendChild(h('h2', { class: 'client-h', text: c.name }));
+    var f1 = floorReels(c, 1), f2 = floorReels(c, 2), f3 = floorReels(c, 3), f4 = floorReels(c, 4), old = oldVersions(c);
+    if (f1.length) {
+      var withDl = f1.filter(function (rr) { return !!rr.latest.dl; }).length;
+      box.appendChild(h('section', { class: 'floor floor-1', id: 'floor-1-' + c.id }, floorHead(1,
+        withDl ? h('button', { type: 'button', class: 'btn ghost sm dl-all', id: 'dl-all', onclick: dlAllSheet }, h('span', { class: 'dl-i', 'aria-hidden': 'true' }), t('downloadAll')) : null),
+        grid(f1.map(function (rr) { return card(c, rr.r, 1); }), true)));
+    }
+    if (f2.length) box.appendChild(h('section', { class: 'floor floor-2', id: 'floor-2-' + c.id }, floorHead(2), grid(f2.map(function (rr) { return card(c, rr.r, 2); }))));
+    if (f3.length) box.appendChild(h('section', { class: 'floor floor-3', id: 'floor-3-' + c.id }, floorHead(3), grid(f3.map(function (rr) { return card(c, rr.r, 3); }))));
+    if (f4.length || old.length) {
+      box.appendChild(foldable('arch|' + c.id, h('details', { class: 'floor floor-4 archive', id: 'floor-4-' + c.id },
+        h('summary', null, floorHead(4, h('span', { class: 'chip seen count', text: String(f4.length + old.length) }))),
+        f4.length ? grid(f4.map(function (rr) { return card(c, rr.r, 4); })) : null,
+        old.length ? h('div', { class: 'old-vers' }, h('h3', { text: t('oldVersionsH') }),
+          h('ul', null, old.map(function (x) {
+            return h('li', null, h('button', { type: 'button', class: 'linkbtn', 'data-ov': x.v.id, onclick: function () { openReel(c.id, x.rr.r.id, x.v.id); } }, x.rr.r.title + ' · ' + x.v.label));
+          }))) : null)));
+    }
+  }
   function renderList() {
     E.main.textContent = '';
     var box = h('div', { class: 'wrap', id: 'list' });
-    var shared = isClient() && S.clients[0] ? sharedPlan(S.clients[0]) : null;
-    // общий план клиента — линия этапов на всю ширину сразу под шапкой; с обложкой клиента — на его кадре и с его логотипом
+    // бренд клиента: кадр-обложка полосой под шапкой (без линии этапов — её больше нет)
     var b = isClient() ? S.brand : null;
-    var band = shared ? planBlock(shared, 'plan', 'band') : null;
     if (b && b.cover) {
-      if (!band) band = h('section', { class: 'plan plan-band', id: 'brand-band' }, h('div', { class: 'wrap' }));
-      band.classList.add('has-cover');
+      var band = h('section', { class: 'plan plan-band has-cover', id: 'brand-band' }, h('div', { class: 'wrap' }));
       band.style.backgroundImage = 'url("' + b.cover + '")';
       var lgc = logoEl('in-band', true);
-      if (lgc) band.firstChild.insertBefore(lgc, band.firstChild.firstChild);
+      if (lgc) band.firstChild.appendChild(lgc);
+      E.main.appendChild(band);
     }
-    if (band) E.main.appendChild(band);
     box.appendChild(isClient() ? heroClient(!(b && b.cover)) : heroTeam());
-    var drafts = [];
-    S.clients.forEach(function (c) {
-      if (!isClient() && S.clients.length > 1) box.appendChild(h('h2', { class: 'client-h', text: c.name }));
-      (c.projects || []).forEach(function (p) {
-        var reels = projReels(p).filter(function (r) {
-          var rr = S.rref[c.id + '|' + r.id];
-          if (rr && reelInfo(rr).draft) { drafts.push(rr); return false; }
-          return true;
-        });
-        if (!reels.length) return;
-        // подзаголовок проекта (p.subtitle) не показываем — только короткое название группы
-        box.appendChild(h('section', { class: 'proj' },
-          h('div', { class: 'proj-h' }, h('h2', { text: p.title })),
-          shared ? null : planBlock(p.plan, 'plan-' + c.id + '-' + p.id, 'inline'),
-          h('div', { class: 'grid', style: '--dc:' + cols(reels.length, 6, 4) + ';--tc:' + cols(reels.length, 4, 3) }, reels.map(function (r) { return card(c, r); }))));
-      });
-    });
-    // «Juodraščiai» — внизу, свёрнуто: досмотренные без решения и без заметок (или draft: true в каталоге)
-    if (drafts.length) {
-      box.appendChild(foldable('drafts', h('details', { class: 'drafts', id: 'drafts' },
-        h('summary', null, h('span', { text: t('drafts', drafts.length) }), h('small', { text: t('draftsSub') })),
-        h('div', { class: 'grid', style: '--dc:' + cols(drafts.length, 6, 4) + ';--tc:' + cols(drafts.length, 4, 3) }, drafts.map(function (rr) { return card(rr.c, rr.r); })))));
-    }
+    S.clients.forEach(function (c) { floorsOf(c, box); });
+    // «Dirbtuvės» — после этажей: выборы клиента, раскрывается на месте (вид команды — по каждому клиенту)
+    S.clients.forEach(function (c) { box.appendChild(dirbtuves(c)); });
     S.clients.forEach(function (c) { add(box, rulesBox(c, 'list')); });
     box.appendChild(footer());
     E.main.appendChild(box);
@@ -848,26 +1182,19 @@
     var head = w.length
       ? h('h1', null, h('span', { class: 'n', text: String(w.length) }), ' ', t('waitingTail', w.length))
       : [h('h1', { text: t('allDone') }), h('p', { text: t('allDoneSub') })];
-    // «Peržiūrėti: N» — когда есть новые версии (или число к просмотру расходится с числом в заголовке); касание — первый такой ролик
-    var rv = allReels().filter(function (rr) { var x = reelInfo(rr); return x.review && !x.draft; });
-    var nv = rv.filter(function (rr) { return reelInfo(rr).newVer; });
-    rv.sort(function (a, b) { return (reelInfo(b).newVer ? 1 : 0) - (reelInfo(a).newVer ? 1 : 0); });
-    var pill = rv.length && (nv.length || rv.length !== w.length)
-      ? h('button', { type: 'button', class: 'rv-pill', id: 'to-review', onclick: function () { openReel(rv[0].c.id, rv[0].r.id); } },
-          h('i', { 'aria-hidden': 'true' }), t('toReview', rv.length))
-      : null;
-    var all = clientReels(S.clients[0] || { projects: [] }).length;
-    var acts = h('div', { class: 'hero-acts' }, pill,
-      all ? h('button', { type: 'button', class: 'btn ghost sm dl-all', id: 'dl-all', onclick: dlAllSheet }, h('span', { class: 'dl-i', 'aria-hidden': 'true' }), t('downloadAll')) : null);
-    return h('section', { class: 'hero' }, h('div', { class: 'hero-t' }, withLogo ? logoEl('in-hero') : null, head), acts);
+    return h('section', { class: 'hero' }, h('div', { class: 'hero-t' }, withLogo ? logoEl('in-hero') : null, head));
   }
   function heroTeam() {
-    var rs = allReels(), un = S.notes.filter(unanswered);
+    var rs = allReels().filter(function (rr) { return floorOf(rr) > 0; }), un = S.notes.filter(unanswered);
     var cnt = { w: 0, c: 0, a: 0 };
-    rs.forEach(function (rr) { var s = vState(rr.c.id, rr.latest.id); if (s === 'approved') cnt.a++; else if (s === 'changes') cnt.c++; else cnt.w++; });
+    rs.forEach(function (rr) { var f = floorOf(rr), s = vState(rr.c.id, rr.latest.id); if (f === 1) cnt.a++; else if (f === 2 && s === 'changes') cnt.c++; else if (f === 2) cnt.w++; });
     var first = un.slice().sort(function (a, b) { return String(a.created_at).localeCompare(String(b.created_at)); })[0];
-    // «atsisiųsta X iš Y»: клиент скачал текущую (последнюю) версию
-    var dl = rs.filter(function (rr) { return !!reelInfo(rr).dl; }).length;
+    // «atsisiųsta X iš Y»: среди готовых (этаж 1) — клиент скачал текущую версию
+    var ready = rs.filter(function (rr) { return floorOf(rr) === 1; });
+    var dl = ready.filter(function (rr) { return !!reelInfo(rr).dl; }).length;
+    // этаж 1 без ссылки на Full HD (dl) — основной чат должен залить финал
+    var noHd = ready.filter(function (rr) { return !rr.latest.dl; });
+    var reqs = S.clients.filter(function (c) { var s = subsOf(c); return s && s.req; });
     return h('section', { class: 'hero' },
       h('p', { class: 'eyebrow', text: t('teamEyebrow') }),
       h('h1', { text: t('teamTitle') }),
@@ -876,35 +1203,45 @@
         h('span', { class: 'stat' }, h('b', { text: String(cnt.w) }), t('sWaiting')),
         h('span', { class: 'stat' }, h('b', { text: String(cnt.c) }), t('sChanges')),
         h('span', { class: 'stat' }, h('b', { text: String(cnt.a) }), t('sApproved'))),
-      h('p', { class: 'dl-sum' + (rs.length && dl === rs.length ? ' all' : ''), id: 'dl-sum' }, h('span', { class: 'dl-i', 'aria-hidden': 'true' }), h('b', { text: String(dl) }), ' ', t('sDownloaded', dl, rs.length)),
+      ready.length ? h('p', { class: 'dl-sum' + (dl === ready.length ? ' all' : ''), id: 'dl-sum' }, h('span', { class: 'dl-i', 'aria-hidden': 'true' }), h('b', { text: String(dl) }), ' ', t('sDownloaded', dl, ready.length)) : null,
+      noHd.length ? h('div', { class: 'nohd', id: 'no-hd' }, h('b', { text: t('noHdT', noHd.length) }),
+        h('ul', null, noHd.map(function (rr) {
+          var s = stOf(rr.c.id, rr.latest.id) || {};
+          return h('li', null, h('button', { type: 'button', class: 'linkbtn', onclick: function () { openReel(rr.c.id, rr.r.id); } }, (S.clients.length > 1 ? rr.c.name + ' · ' : '') + rr.r.title + ' · ' + rr.latest.label),
+            s.decided_at ? h('span', { class: 'sl-by', text: ' ' + t('byWhen', s.decided_by, fmtD(s.decided_at)) }) : null);
+        }))) : null,
+      reqs.length ? h('p', { class: 'nohd', id: 'subs-req-sum' }, h('b', { text: t('subsReqSum', reqs.map(function (c) { return c.name; }).join(', ')) })) : null,
       first ? h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn primary', id: 'open-unanswered', onclick: function () { openReel(first.client_id, first.reel_id, first.version_id); } }, t('openUnanswered'))) : null);
   }
-  function card(c, r) {
+  // карточка: обложка, версия; этаж 1 — мелкая (только узнать); 2 — версия и сколько раз правили; 3 — patinka / nepatinka
+  function card(c, r, floor) {
     var v = r.versions[r.versions.length - 1], st = vState(c.id, v.id);
     var rr = S.rref[c.id + '|' + r.id], info = rr ? reelInfo(rr) : {};
+    floor = floor || (rr ? floorOf(rr) : 2);
     var rn = S.notes.filter(function (n) { return n.client_id === c.id && n.reel_id === r.id; });
     var nv = rn.filter(function (n) { return n.version_id === v.id; }).length;
-    var meta = null;
-    if (isClient()) {
-      // под карточкой — только число заметок; «Žiūrėti ir komentuoti» не пишем: кнопка ▶ говорит то же
-      if (nv) meta = h('span', { class: 'cm cta', text: t('nNotes', nv) });
-    } else {
-      var parts = [], un = rn.filter(unanswered).length;
-      if (nv) parts.push(t('nNotes', nv));
+    var parts = [];
+    if (floor === 2 && r.versions.length > 1) parts.push(t('rounds', r.versions.length - 1));
+    if (nv) parts.push(t('nNotes', nv));
+    if (!isClient()) {
+      var un = rn.filter(unanswered).length;
       if (un) parts.push(t('nUnanswered', un));
-      if (!parts.length && r.versions.length > 1) parts.push(t('nVersions', r.versions.length));
       if (info.dl) parts.push(t('dlShort'));
-      if (parts.length) meta = h('span', { class: 'cm', text: parts.join(' · ') });
+      if (floor === 1 && !v.dl) parts.push(t('noHdShort'));
     }
+    var re = floor === 3 ? reactionOf(c.id, v.id) : null;
+    var meta = parts.length ? h('span', { class: 'cm', text: parts.join(' · ') }) : null;
     // обложка: картинка из каталога; если её нет — кадр из самого ролика поверх подложки с номером версии
     var cover = v.poster ? h('img', { src: v.poster, alt: '', loading: 'lazy', decoding: 'async' }) : [h('span', { class: 'tile', text: v.label || '9×16' }), frameThumb(v.src)];
+    // «Neperžiūrėta» / «Nauja» не показываем (Павел 27.11): непросмотренное и так стоит на этаже 2; остаются «Reikia pataisymų» и версия
+    var badge = floor === 2 && st === 'changes' ? chip('changes') : floor === 1 ? h('span', { class: 'mk approved', role: 'img', 'aria-label': t('chip_approved'), title: t('chip_approved') }) : null;
     var thumb = h('span', { class: 'thumb' }, cover,
-      h('span', { class: 'play', 'aria-hidden': 'true' }),
-      isClient() ? mark(st) : chip(st),
-      info.newVer ? h('span', { class: 'nv-strip', text: isClient() ? t('newVersionCard') : t('newVersionLine', v.label) }) : null,
+      floor === 1 ? null : h('span', { class: 'play', 'aria-hidden': 'true' }),
+      badge,
+      re ? h('span', { class: 'react-mk ' + re, text: re === 'like' ? t('likeShort') : t('dislikeShort') }) : null,
       h('span', { class: 'vtag', text: v.label }),
-      v.duration ? h('span', { class: 'dur', text: fmtT(v.duration) }) : null);
-    return h('button', { type: 'button', class: 'card' + (info.newVer ? ' is-newver' : ''), id: 'card-' + r.id, 'data-state': st, 'data-draft': info.draft ? '1' : null, onclick: function () { openReel(c.id, r.id); } },
+      v.duration && floor !== 1 ? h('span', { class: 'dur', text: fmtT(v.duration) }) : null);
+    return h('button', { type: 'button', class: 'card' + (floor === 1 ? ' sm' : ''), id: 'card-' + r.id, 'data-state': st, 'data-floor': String(floor), onclick: function () { openReel(c.id, r.id); } },
       thumb, h('span', { class: 'ct', text: r.title }), meta);
   }
   function frameThumb(src) {
@@ -1105,7 +1442,7 @@
   function nextReel() {
     var cur = S.rref[S.cid + '|' + S.rid];
     if (!cur) return null;
-    var list = clientReels(cur.c), i = list.indexOf(cur);
+    var fl = floorOf(cur), list = fl ? floorReels(cur.c, fl) : [], i = list.indexOf(cur);
     if (i < 0) return null;
     var after = list.slice(i + 1), before = list.slice(0, i);
     if (isClient()) { var w = after.concat(before).filter(isWaiting)[0]; if (w) return w; }
@@ -1150,48 +1487,55 @@
     revealStage();
   }
 
-  // ---------------- под видео: варианты, «что изменено»; справа: решение, план, заметки ----------------
+  // ---------------- под видео: две последние версии, «что изменено», скачивание (только этаж 1); справа: решение, заметки ----------------
   function renderSide() {
     var vr = curRef();
     if (!vr || !E.side) return;
+    var f = floorOf(vr.rr);
     E.phead.textContent = '';
-    E.phead.append(h('p', { class: 'eyebrow', text: (isClient() ? '' : vr.c.name + ' · ') + vr.p.title }), h('h1', { id: 'reel-title', text: vr.r.title }));
-    add(E.phead, [variantsRow(vr), changesBox(vr), dlRow(vr)]);
+    E.phead.append(h('p', { class: 'eyebrow', text: (isClient() ? '' : vr.c.name + ' · ') + (f ? t('floor' + f) : t('dirb')) }), h('h1', { id: 'reel-title', text: vr.r.title }));
+    add(E.phead, [variantsRow(vr), changesBox(vr), f === 1 && vr.latest ? dlRow(vr) : null]);
     E.side.textContent = '';
-    add(E.side, [isClient() ? decisionPanel(vr) : teamStatusPanel(vr), planMini(vr.p.plan), notesPanel(vr), rulesBox(vr.c, 'player')]);
+    // без линии этапов и без правил (Павел 27.11: правила — только на главной, внизу)
+    add(E.side, [isClient() ? decisionPanel(vr) : teamStatusPanel(vr), notesPanel(vr)]);
     renderCmpbar();
   }
+  // в ролике — две последние версии; открытая старая (из «Archyvas») показывается третьей
+  function shownVersions(vr) {
+    var vs = vr.rr.vs.slice(-2);
+    if (vs.indexOf(vr.v) < 0) vs = [vr.v].concat(vs);
+    return vs;
+  }
   function variantsRow(vr) {
-    var vs = vr.rr.vs;
+    var vs = shownVersions(vr);
     if (vs.length < 2) return null;
     return h('div', { class: 'variants' },
       h('div', { class: 'vseg', role: 'group', 'aria-label': t('variants') }, vs.map(function (v) {
-        var st = vState(vr.c.id, v.id);
-        return h('button', { type: 'button', 'data-v': v.id, id: 'ver-' + v.label, 'aria-pressed': String(v.id === vr.v.id), onclick: function () { pickVersion(v); } },
-          v.label, st === 'new' ? h('span', { class: 'dot', 'aria-hidden': 'true' }) : null);
+        return h('button', { type: 'button', 'data-v': v.id, id: 'ver-' + v.label, 'aria-pressed': String(v.id === vr.v.id), onclick: function () { pickVersion(v); } }, v.label);
       })),
       h('button', { type: 'button', class: 'cmp-tog', id: 'compare-toggle', 'aria-pressed': String(!!S.cmp), onclick: toggleCompare }, t('compareMode')));
   }
-  // режим «Palyginti»: крупные v1 / v2 прямо под видео, переключение в той же секунде
+  // режим «Palyginti»: крупные кнопки версий прямо под видео, переключение в той же секунде
   function renderCmpbar() {
     if (!E.cmpbar) return;
-    var vr = curRef(), on = !!(S.cmp && vr && vr.rr.vs.length > 1);
+    var vr = curRef(), vs = vr ? shownVersions(vr) : [], on = !!(S.cmp && vs.length > 1);
     E.cmpbar.hidden = !on;
     if (E.player) E.player.classList.toggle('cmp-on', on);
     E.cmpbar.textContent = '';
     if (!on) return;
     E.cmpbar.append(
-      h('div', { class: 'cseg', role: 'group', 'aria-label': t('variants') }, vr.rr.vs.map(function (v) {
+      h('div', { class: 'cseg', role: 'group', 'aria-label': t('variants') }, vs.map(function (v) {
         return h('button', { type: 'button', id: 'cmp-' + v.label, 'aria-pressed': String(v.id === vr.v.id), onclick: function () { switchVersion(v, { same: true }); } }, v.label);
       })),
       h('span', { class: 'chint', 'aria-hidden': 'true' }),
       h('button', { type: 'button', class: 'cx', id: 'cmp-off', 'aria-label': t('compareOff'), title: t('compareOff'), onclick: toggleCompare }, '×'));
   }
-  // «Atsisiųsti v2» — та версия, что сейчас в плеере; у клиента рядом — «Atsisiųsta ✓», если уже скачал
+  // этаж 1: «Atsisiųsti» финал (поле dl у последней версии: Google Диск или файл в бакете); нет dl — «Full HD ruošiame»
   function dlRow(vr) {
-    var s = stOf(vr.c.id, vr.v.id);
+    var v = vr.rr.latest, s = stOf(vr.c.id, v.id);
+    if (!v.dl) return h('div', { class: 'dlrow' }, h('span', { class: 'dl-wait', id: 'dl-wait', text: t('noHdLine') }));
     return h('div', { class: 'dlrow' },
-      dlLink(vr.c, vr.r, vr.v, { class: 'btn ghost sm dl-btn', id: 'dl-btn' }, [h('span', { class: 'dl-i', 'aria-hidden': 'true' }), t('download', vr.rr.vs.length > 1 ? vr.v.label : '')]),
+      dlLink(vr.c, vr.r, v, { class: 'btn ghost sm dl-btn', id: 'dl-btn' }, [h('span', { class: 'dl-i', 'aria-hidden': 'true' }), t('downloadHd')]),
       isClient() && s && s.downloaded_at ? h('span', { class: 'dl-done', id: 'dl-done', text: t('downloadedMark') }) : null);
   }
   function changesBox(vr) {
@@ -1199,14 +1543,26 @@
     return foldable('chg|' + vr.c.id + '|' + vr.v.id, h('details', { class: 'changes', id: 'changes' },
       h('summary', { text: vr.i === 0 ? t('aboutFirst') : t('whatChanged', vr.v.label) }), h('p', { text: vr.v.changes })));
   }
+  // patinka / nepatinka (этаж 3, анимации, голос): S.reactions[cid|item]
+  function reactionOf(cid, item) { var x = S.reactions[cid + '|' + item]; return x && x.reaction ? x.reaction : null; }
+  function react(cid, item, val, after) {
+    withName(function () {
+      var cur = reactionOf(cid, item), next = cur === val ? 'none' : val;
+      S.backend.react(S.auth, cid, item, next, S.name).then(function (x) {
+        if (x && x.reaction) S.reactions[cid + '|' + item] = x; else delete S.reactions[cid + '|' + item];
+        if (after) after();
+        toast(next === 'like' ? t('likedToast') : next === 'dislike' ? t('dislikedToast') : t('undone'));
+      }).catch(function () { toast(t('err')); });
+    });
+  }
+  function reactButtons(cid, item, idp, after) {
+    var cur = reactionOf(cid, item);
+    return h('div', { class: 'react', role: 'group' },
+      h('button', { type: 'button', class: 'btn sm rb like', id: idp + '-like', 'aria-pressed': String(cur === 'like'), onclick: function () { react(cid, item, 'like', after); } }, t('like')),
+      h('button', { type: 'button', class: 'btn sm rb dislike', id: idp + '-dislike', 'aria-pressed': String(cur === 'dislike'), onclick: function () { react(cid, item, 'dislike', after); } }, t('dislike')));
+  }
   function decisionPanel(vr) {
-    var s = stOf(vr.c.id, vr.v.id) || {}, box = h('section', { class: 'panel', id: 'decision' });
-    // новая версия: просим посмотреть; решение по прежней версии к этой не относится
-    var info = vr.latest ? reelInfo(vr.rr) : {};
-    if (info.newVer) {
-      box.append(h('div', { class: 'newver', id: 'newver' }, h('p', { class: 'vt', text: t('newVersionLine', vr.v.label) }),
-        info.prevDecided ? h('p', { class: 'vs', text: t('oldDecisionLine', info.prevDecided.label) }) : null));
-    }
+    var s = stOf(vr.c.id, vr.v.id) || {}, box = h('section', { class: 'panel', id: 'decision' }), f = floorOf(vr.rr);
     if (!vr.latest) {
       var latest = vr.rr.latest;
       box.append(h('div', { class: 'verdict info' },
@@ -1215,12 +1571,25 @@
         h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn primary sm', id: 'to-latest', onclick: function () { switchVersion(latest, { t: 0 }); } }, t('toLatest', latest.label)))));
       return box;
     }
-    if (s.decision === 'approved') {
-      box.append(h('div', { class: 'verdict approved', id: 'verdict' },
-        h('p', { class: 'vt', text: t('approvedT') }),
-        h('p', { class: 'vs', text: t('byWhen', s.decided_by, fmtD(s.decided_at)) }),
-        h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn ghost sm', id: 'btn-undo', onclick: function () { decide('none'); } }, t('undo')))));
+    if (f === 4) { box.append(h('div', { class: 'verdict info', id: 'verdict' }, h('p', { class: 'vt', text: t('archiveLine') }))); return box; }
+    if (f === 3) {
+      box.append(h('div', { class: 'draftbox', id: 'draft-react' }, h('p', { class: 'vt', text: t('draftQ') }),
+        reactButtons(vr.c.id, vr.v.id, 'dr', function () { if (S.view === 'player') renderSide(); }),
+        h('button', { type: 'button', class: 'linkbtn', id: 'draft-comment', onclick: function () { noteSheet(null, { title: t('draftComment') }); } }, t('draftComment'))));
       return box;
+    }
+    if (f === 1) {
+      box.append(h('div', { class: 'verdict approved', id: 'verdict' },
+        h('p', { class: 'vt', text: t('readyT') }),
+        s.decision === 'approved' ? h('p', { class: 'vs', text: t('byWhen', s.decided_by, fmtD(s.decided_at)) }) : null,
+        s.decision === 'approved' ? h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn ghost sm', id: 'btn-undo', onclick: function () { decide('none'); } }, t('undo'))) : null));
+      return box;
+    }
+    // этаж 2: «Viskas gerai» → этаж 1; «Reikia pataisymų» — заметки
+    var info = reelInfo(vr.rr);
+    if (info.newVer) {
+      box.append(h('div', { class: 'newver', id: 'newver' }, h('p', { class: 'vt', text: t('newVersionLine', vr.v.label) }),
+        info.prevDecided ? h('p', { class: 'vs', text: t('oldDecisionLine', info.prevDecided.label) }) : null));
     }
     if (s.decision === 'changes') {
       box.append(h('div', { class: 'verdict changes', id: 'verdict' },
@@ -1234,17 +1603,18 @@
     }
     box.append(h('div', { class: 'decide' },
       h('button', { type: 'button', class: 'btn ok', id: 'btn-approve', onclick: function () { decide('approved'); } }, t('approve')),
-      h('button', { type: 'button', class: 'btn chg', id: 'btn-changes', onclick: function () { decide('changes'); } }, t('needChanges'))));
+      h('button', { type: 'button', class: 'btn chg', id: 'btn-changes', onclick: function () { decide('changes'); } }, t('needChanges'))),
+      h('p', { class: 'decide-sub', text: t('approveSub') }));
     return box;
   }
   function teamStatusPanel(vr) {
-    var s = stOf(vr.c.id, vr.v.id) || {};
-    // коротко: метка статуса (+ кто и когда решил) и строка «кто смотрел, сколько %» — только если есть что сказать;
-    // «ещё не смотрел» / «решения нет» словами не пишем — это уже говорит метка
+    var s = stOf(vr.c.id, vr.v.id) || {}, f = floorOf(vr.rr), re = reactionOf(vr.c.id, vr.v.id), rx = S.reactions[vr.c.id + '|' + vr.v.id];
     var lines = [
-      h('li', null, chip(vState(vr.c.id, vr.v.id)), s.decision ? h('span', { class: 'sl-by', text: t('byWhen', s.decided_by, fmtD(s.decided_at)) }) : null),
+      h('li', { id: 'floor-line' }, h('span', { class: 'chip team', text: f ? f + ' · ' + t('floor' + f) : t('dirb') })),
+      s.decision ? h('li', null, chip(vState(vr.c.id, vr.v.id)), h('span', { class: 'sl-by', text: t('byWhen', s.decided_by, fmtD(s.decided_at)) })) : null,
       s.seen_at ? h('li', { text: t('seenLine', s.seen_by, fmtD(s.seen_at), s.seen_pct) }) : null,
-      h('li', { class: 'dl-line' + (s.downloaded_at ? ' ok' : ''), id: 'dl-line', text: s.downloaded_at ? t('downloadedLine', s.downloaded_by, fmtD(s.downloaded_at)) : t('notDownloadedLine') })
+      re ? h('li', { id: 'react-line', text: (re === 'like' ? t('like') : t('dislike')) + ' · ' + t('byWhen', rx.reacted_by, fmtD(rx.reacted_at)) }) : null,
+      f === 1 ? h('li', { class: 'dl-line' + (s.downloaded_at ? ' ok' : ''), id: 'dl-line', text: s.downloaded_at ? t('downloadedLine', s.downloaded_by, fmtD(s.downloaded_at)) : t('notDownloadedLine') }) : null
     ];
     return h('section', { class: 'panel', id: 'decision' }, h('h3', { text: t('clientDecision') + ' · ' + vr.v.label }), h('ul', { class: 'st-lines' }, lines));
   }
@@ -1524,7 +1894,7 @@
     });
   }
 
-  window.KAB_APP = { state: S, version: '2026-11-26', dlHref: dlHref, dlName: dlName };
+  window.KAB_APP = { state: S, version: '2026-11-27', dlHref: dlHref, dlName: dlName, SUB_LEVELS: SUB_LEVELS, SUB_STYLES: SUB_STYLES };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();

@@ -43,10 +43,16 @@
     return { adminToken: embed.adminToken || '', clients: [c], demo: embed.demo || null };
   }
 
-  function stripClient(c) {
+  // team = true — ссылка команды: только ей отдаются внутренние правила (rulesInternal), как kab_admin_state в базе
+  function stripClient(c, team, subs) {
     var x = { id: c.id, name: c.name, contact: c.contact || '', projects: c.projects || [] };
     if (c.brand) x.brand = c.brand; // слой бренда клиента (логотип, цвет, обложка, шрифт) — klientas.py, ключи logotipas / spalva / virselis / sriftas
-    if (c.rules) x.rules = c.rules; // правила клиента [{title, items}] — klientas.py, ключ taisykles: файл.md
+    // правила клиента [{title, items}] — klientas.py, ключ taisykles: файл.md; группы с internal: true клиенту не уходят
+    if (c.rules) x.rules = c.rules.filter(function (g) { return !(g && g.internal === true); });
+    if (c.chosenCover) x.chosenCover = c.chosenCover; // выбранная клиентом обложка {src, caption} — ключ pasirinktas_virselis:
+    x.voices = c.voices || []; // голос ИИ для «Dirbtuvės»: [{id, title, src}]
+    x.subtitles = subs || null; // выбор «Titrai»: {bottom_px, style, chosen_by, side, chosen_at}
+    if (team) x.rulesInternal = c.rulesInternal || [];
     return x;
   }
   function findVersion(client, reelId, versionId) {
@@ -70,12 +76,15 @@
     var db = null;
     try { db = JSON.parse(LS.get(this.key) || 'null'); } catch (e) { db = null; }
     if (!db || !db.notes || !db.statuses) {
-      db = { notes: [], statuses: [] };
+      db = { notes: [], statuses: [], subtitles: {}, reactions: [] };
       var seed = this.m.demo || {};
       (seed.notes || []).forEach(function (n) { db.notes.push(Object.assign({ id: uuid(), side: 'client', device: 'seed', reply: null, reply_by: null, reply_at: null, fixed: false, fixed_at: null }, n)); });
       (seed.statuses || []).forEach(function (s) { db.statuses.push(Object.assign({}, s)); });
+      (seed.subtitles || []).forEach(function (s) { var x = Object.assign({}, s); delete x.client_id; db.subtitles[s.client_id] = x; });
       this._save(db);
     }
+    if (!db.subtitles) db.subtitles = {}; // демо, начатое до 27.11
+    if (!db.reactions) db.reactions = [];
     return db;
   };
   LocalBackend.prototype._save = function (db) { LS.set(this.key, JSON.stringify(db)); };
@@ -94,14 +103,15 @@
     var mark = function (n) { var x = clone(n); x.mine = !!(dev && x.device === dev); delete x.device; return x; };
     return delay(60).then(function () {
       if (self._isAdmin(auth)) {
-        return { mode: 'team', clients: (self.m.clients || []).map(stripClient), notes: db.notes.map(mark), statuses: clone(db.statuses) };
+        return { mode: 'team', clients: (self.m.clients || []).map(function (c) { return stripClient(c, true, db.subtitles[c.id] || null); }), notes: db.notes.map(mark), statuses: clone(db.statuses), reactions: clone(db.reactions) };
       }
       var c = self._client(auth);
       if (!c) return { error: 'bad_token' };
       return {
-        mode: 'client', clients: [stripClient(c)],
+        mode: 'client', clients: [clone(stripClient(c, false, db.subtitles[c.id] || null))],
         notes: db.notes.filter(function (n) { return n.client_id === c.id; }).map(mark),
-        statuses: db.statuses.filter(function (s) { return s.client_id === c.id; })
+        statuses: db.statuses.filter(function (s) { return s.client_id === c.id; }),
+        reactions: clone(db.reactions.filter(function (x) { return x.client_id === c.id; }))
       };
     });
   };
@@ -163,6 +173,45 @@
     if (!s.downloaded_at) { s.downloaded_at = now(); s.downloaded_by = String(by || '').slice(0, 80) || null; }
     this._save(db);
     return delay(60).then(function () { return clone(s); });
+  };
+  // «Titrai»: где субтитры (низ строки, px из 1920) и стиль; клиент — за себя, команда — за любого клиента (side: team)
+  LocalBackend.prototype.setSubtitles = function (auth, clientId, choice) {
+    var db = this._db(), c = this._clientById(clientId), admin = this._isAdmin(auth);
+    if (!this._allowed(auth, clientId) || !c) return Promise.reject(new Error('forbidden'));
+    var px = Math.round(+choice.bottom_px), st = String(choice.style || '');
+    if (!(px >= 900 && px <= 1700)) return Promise.reject(new Error('bad_level'));
+    if (!/^[a-z0-9-]{1,40}$/.test(st)) return Promise.reject(new Error('bad_style'));
+    var by = String(choice.by || '').trim().slice(0, 80) || null, old = db.subtitles[clientId] || null, rec;
+    if (old && old.locked && !admin) {
+      // закреплено командой: клиент не меняет, а просит (req_*) — как kab_subtitles_set в базе
+      rec = Object.assign({}, old, { req_bottom_px: px, req_style: st, req_by: by, req_at: now() });
+    } else {
+      rec = { bottom_px: px, style: st, chosen_by: by, side: admin ? 'team' : 'client', chosen_at: now(), locked: !!(old && old.locked), req_bottom_px: null, req_style: null, req_by: null, req_at: null };
+    }
+    db.subtitles[clientId] = rec; this._save(db);
+    return delay(90).then(function () { return clone(rec); });
+  };
+  LocalBackend.prototype.lockSubtitles = function (auth, clientId, locked) {
+    var db = this._db();
+    if (!this._isAdmin(auth)) return Promise.reject(new Error('forbidden'));
+    var rec = db.subtitles[clientId];
+    if (!rec) return Promise.reject(new Error('no_choice'));
+    rec.locked = !!locked; this._save(db);
+    return delay(60).then(function () { return clone(rec); });
+  };
+  // patinka / nepatinka: версия ролика из каталога или голос из voices; 'none' — снять
+  LocalBackend.prototype.react = function (auth, clientId, itemId, reaction, by) {
+    var db = this._db(), c = this._clientById(clientId), ok = false;
+    if (this._isAdmin(auth) || !this._allowed(auth, clientId) || !c) return Promise.reject(new Error('forbidden'));
+    (c.projects || []).forEach(function (p) { (p.reels || []).forEach(function (r) { (r.versions || []).forEach(function (v) { if (v.id === itemId) ok = true; }); }); });
+    (c.voices || []).forEach(function (v) { if (v.id === itemId) ok = true; });
+    if (!ok) return Promise.reject(new Error('no_item'));
+    if (['like', 'dislike', 'none'].indexOf(reaction) < 0) return Promise.reject(new Error('bad_reaction'));
+    db.reactions = db.reactions.filter(function (x) { return !(x.client_id === clientId && x.item_id === itemId); });
+    var rec = { client_id: clientId, item_id: itemId, reaction: reaction === 'none' ? null : reaction, reacted_by: String(by || '').slice(0, 80) || null, reacted_at: now() };
+    if (rec.reaction) db.reactions.push(rec);
+    this._save(db);
+    return delay(60).then(function () { return clone(rec); });
   };
   LocalBackend.prototype._adminNote = function (auth, id, fn) {
     if (!this._isAdmin(auth)) return Promise.reject(new Error('forbidden'));
@@ -228,6 +277,19 @@
   SupabaseBackend.prototype.markDownloaded = function (auth, clientId, versionId, by) {
     if (auth.kind !== 'client') return Promise.reject(new Error('forbidden'));
     return this.rpc('kab_mark_downloaded', { p_token: auth.token, p_version_id: versionId, p_by: by || '' }, true);
+  };
+  // kab_subtitles_set / kab_admin_subtitles_set — migracija-2026-11-27.sql
+  SupabaseBackend.prototype.setSubtitles = function (auth, clientId, choice) {
+    if (auth.kind === 'admin') return this.rpc('kab_admin_subtitles_set', { p_token: auth.token, p_client_id: clientId, p_bottom_px: choice.bottom_px, p_style: choice.style, p_by: choice.by || '' });
+    return this.rpc('kab_subtitles_set', { p_token: auth.token, p_bottom_px: choice.bottom_px, p_style: choice.style, p_by: choice.by || '' });
+  };
+  // migracija-2026-11-27-etazai.sql
+  SupabaseBackend.prototype.lockSubtitles = function (auth, clientId, locked) {
+    return this.rpc('kab_admin_subtitles_lock', { p_token: auth.token, p_client_id: clientId, p_locked: !!locked });
+  };
+  SupabaseBackend.prototype.react = function (auth, clientId, itemId, reaction, by) {
+    if (auth.kind !== 'client') return Promise.reject(new Error('forbidden'));
+    return this.rpc('kab_react', { p_token: auth.token, p_item_id: itemId, p_reaction: reaction, p_by: by || '' });
   };
   SupabaseBackend.prototype.reply = function (auth, id, text, by) {
     return this.rpc('kab_admin_reply', { p_token: auth.token, p_note_id: id, p_reply: text || '', p_by: by || '' });
